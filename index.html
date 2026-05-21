@@ -5,11 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Loginhelper</title>
 
+<!-- QR scanner library -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+
 <style>
 body {
-    font-family: Segoe UI, Arial, sans-serif;
+    font-family: Segoe UI, Arial;
     background: #d8e3f0;
-    margin: 0;
 }
 
 .container {
@@ -21,29 +23,20 @@ body {
     box-shadow: 0 6px 20px rgba(0,0,0,0.1);
 }
 
-h1 {
-    color: #2b4c7e;
-    margin-bottom: 20px;
-}
-
-/* layout */
 .grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 25px;
 }
 
-/* input */
 input {
     width: 100%;
     padding: 15px;
     border-radius: 10px;
     border: 2px solid #84a646;
     font-size: 16px;
-    box-sizing: border-box;
 }
 
-/* knoppen */
 .button {
     width: 100%;
     padding: 14px;
@@ -54,29 +47,30 @@ input {
     color: white;
     font-size: 16px;
     cursor: pointer;
-
     display: flex;
     align-items: center;
-    gap: 10px;
     justify-content: center;
+    gap: 10px;
 }
 
 .button:hover {
     background: #769d44;
 }
 
-/* office */
 .office h2 {
     margin-top: 0;
     color: #2b4c7e;
 }
 
-/* icoontjes */
 .icon {
     width: 20px;
 }
 
-/* mobiel */
+/* scanner */
+#reader {
+    margin-top: 15px;
+}
+
 @media (max-width: 700px) {
     .grid {
         grid-template-columns: 1fr;
@@ -94,11 +88,13 @@ input {
 
         <!-- LINKS -->
         <div>
-            <input id="snummer" placeholder="Typ S-nummer...">
+            <input id="snummer" placeholder="Typ S-nummer (optioneel)…">
 
-            <button class="button" onclick="loginTeams()">
+            <button class="button" onclick="startScan()">
                 📷 Scan QR-code
             </button>
+
+            <div id="reader"></div>
         </div>
 
         <!-- RECHTS -->
@@ -120,13 +116,14 @@ input {
                 PowerPoint
             </button>
 
+            <!-- ✅ FIXED ICONS -->
             <button class="button" onclick="openApp('onedrive')">
-                <img class="icon" src="https://img.icons8.com/fluency/48/onedrive.png">
+                <img class="icon" src="https://img.icons8.com/color/48/000000/onedrive.png">
                 OneDrive
             </button>
 
             <button class="button" onclick="openApp('outlook')">
-                <img class="icon" src="https://img.icons8.com/color/48/outlook.png">
+                <img class="icon" src="https://img.icons8.com/color/48/000000/microsoft-outlook-2019.png">
                 Outlook
             </button>
         </div>
@@ -136,23 +133,8 @@ input {
 
 <script>
 
-/* 🔹 gebruikersnaam maken */
-function getUsername() {
-    let s = document.getElementById("snummer").value.trim();
-
-    if (!s) {
-        alert("Vul je S-nummer in!");
-        return null;
-    }
-
-    return s + "@leerling.vbshgoor.be";
-}
-
-/* ✅ Teams via QR knop */
-function loginTeams() {
-    let user = getUsername();
-    if (!user) return;
-
+/* ✅ Teams login */
+function goToTeams(user) {
     let url = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
         + "?client_id=1fec8e78-bce4-4aaf-ab1b-5451cc387264"
         + "&response_type=code"
@@ -163,30 +145,51 @@ function loginTeams() {
     window.location.href = url;
 }
 
-/* ✅ andere apps */
+/* ✅ QR scanner starten */
+function startScan() {
+    const html5QrCode = new Html5Qrcode("reader");
+
+    html5QrCode.start(
+        { facingMode: "environment" },
+        {
+            fps: 10,
+            qrbox: 250
+        },
+        (decodedText) => {
+            html5QrCode.stop();
+
+            /* verwacht: enkel S-nummer in QR */
+            let user = decodedText.trim() + "@leerling.vbshgoor.be";
+
+            goToTeams(user);
+        },
+        (error) => {
+            // niets tonen
+        }
+    ).catch(err => {
+        alert("Camera kon niet gestart worden");
+    });
+}
+
+/* ✅ fallback manueel */
+function getUsername() {
+    let s = document.getElementById("snummer").value.trim();
+    if (!s) {
+        alert("Vul je S-nummer in!");
+        return null;
+    }
+    return s + "@leerling.vbshgoor.be";
+}
+
 function openApp(app) {
     let user = getUsername();
     if (!user) return;
 
     let base = "https://portal.office.com/?login_hint=" + encodeURIComponent(user);
 
-    switch(app) {
-        case "teams":
-            loginTeams();
-            break;
-        case "word":
-            window.location.href = base;
-            break;
-        case "ppt":
-            window.location.href = base;
-            break;
-        case "onedrive":
-            window.location.href = base;
-            break;
-        case "outlook":
-            window.location.href = "https://outlook.office.com/mail/?login_hint=" + encodeURIComponent(user);
-            break;
-    }
+    if (app === "teams") goToTeams(user);
+    if (app === "outlook") window.location.href = "https://outlook.office.com/mail/?login_hint=" + user;
+    else window.location.href = base;
 }
 
 </script>

@@ -2,87 +2,91 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Loginhelper</title>
 
-<!-- ✅ JUISTE QR LIBRARY -->
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-
 <style>
-:root {
-  --groen: #9DC66B;
-  --groen-donker: #7FA650;
-  --blauw: #4A5C8A;
-  --lichtblauw: #E5F1F6;
-  --wit: #ffffff;
-}
-
 body {
-  font-family: Arial, sans-serif;
-  background: var(--lichtblauw);
-  margin: 0;
-  padding: 30px;
+    font-family: Segoe UI, Arial, sans-serif;
+    background: #d8e3f0;
+    margin: 0;
 }
 
+/* container */
 .container {
-  background: var(--wit);
-  padding: 25px;
-  border-radius: 20px;
-  max-width: 900px;
-  margin: auto;
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 25px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    max-width: 900px;
+    margin: 60px auto;
+    background: #f5f7fa;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
 }
 
-h1, h2 {
-  color: var(--blauw);
+/* titel */
+h1 {
+    color: #2b4c7e;
+    margin-bottom: 20px;
 }
 
+/* layout */
+.grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 25px;
+}
+
+/* input */
 input {
-  width: 100%;
-  padding: 15px;
-  border-radius: 12px;
-  border: 2px solid var(--groen);
-  font-size: 20px;
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #84a646;
+    font-size: 16px;
+    box-sizing: border-box;
 }
 
-button {
-  width: 100%;
-  padding: 15px;
-  margin-top: 12px;
-  background: var(--groen);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 18px;
-  cursor: pointer;
+/* knoppen */
+.button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 10px;
+    background: #8eb458;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
 }
 
-button:hover {
-  background: var(--groen-donker);
+.button:hover {
+    background: #769d44;
 }
 
-#emailDisplay {
-  margin-top: 15px;
-  font-size: 22px;
-  text-align: center;
-  font-weight: bold;
-  color: var(--blauw);
+/* office kolom */
+.office h2 {
+    margin-top: 0;
+    color: #2b4c7e;
 }
 
-#reader {
-  margin-top: 15px;
-  display: none;
-  border-radius: 10px;
-  overflow: hidden;
+/* icoontjes */
+.icon {
+    width: 20px;
 }
 
-#status {
-  margin-top: 10px;
-  text-align: center;
-  font-size: 16px;
-  color: var(--blauw);
+.qr-btn {
+    background: #8eb458;
+}
+
+/* mobiel */
+@media (max-width: 700px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 </head>
@@ -90,153 +94,110 @@ button:hover {
 <body>
 
 <div class="container">
+    <h1>Loginhelper</h1>
 
-<div>
-  <h1>Loginhelper</h1>
+    <div class="grid">
 
-  <input id="s" placeholder="Typ S-nummer..." oninput="makeEmail()">
+        <!-- LINKS -->
+        <div>
+            <input id="snummer" placeholder="Typ S-nummer...">
 
-  <button onclick="startScanner()">📷 Scan QR-code</button>
+            <button class="button" onclick="loginTeams()">
+                <img class="icon" src="https://img.icons8.com/color/48/microsoft-teams.png">
+                Teams openen
+            </button>
 
-  <div id="status"></div>
-  <div id="reader"></div>
+            <button class="button qr-btn">
+                📷 Scan QR-code
+            </button>
+        </div>
 
-  <div id="emailDisplay"></div>
-</div>
+        <!-- RECHTS -->
+        <div class="office">
+            <h2>Office</h2>
 
-<div>
-  <h2>Office</h2>
-  <button onclick="openApp('teams')">Teams</button>
-  <button onclick="openApp('word')">Word</button>
-  <button onclick="openApp('powerpoint')">PowerPoint</button>
-  <button onclick="openApp('onedrive')">OneDrive</button>
-  <button onclick="openApp('outlook')">Outlook</button>
-</div>
+            <button class="button" onclick="openApp('teams')">
+                <img class="icon" src="https://img.icons8.com/color/48/microsoft-teams.png">
+                Teams
+            </button>
 
+            <button class="button" onclick="openApp('word')">
+                <img class="icon" src="https://img.icons8.com/fluency/48/microsoft-word-2019.png">
+                Word
+            </button>
+
+            <button class="button" onclick="openApp('ppt')">
+                <img class="icon" src="https://img.icons8.com/fluency/48/microsoft-powerpoint-2019.png">
+                PowerPoint
+            </button>
+
+            <button class="button" onclick="openApp('onedrive')">
+                <img class="icon" src="https://img.icons8.com/fluency/48/onedrive.png">
+                OneDrive
+            </button>
+
+            <button class="button" onclick="openApp('outlook')">
+                <img class="icon" src="https://img.icons8.com/color/48/outlook.png">
+                Outlook
+            </button>
+        </div>
+
+    </div>
 </div>
 
 <script>
 
-let currentEmail = "";
-let scanner = null;
-
-/* ===== EMAIL VIA INPUT ===== */
-function makeEmail() {
-  let raw = document.getElementById("s").value.trim().toLowerCase();
-
-  if (raw.startsWith("s")) raw = raw.slice(1);
-
-  if (/^[0-9]{6}$/.test(raw)) {
-    currentEmail = "s" + raw + "@leerling.gvbbooischot.be";
-  } else {
-    currentEmail = "";
-  }
-
-  updateDisplay();
+function getUsername() {
+    let s = document.getElementById("snummer").value.trim();
+    if (!s) {
+        alert("Vul je S-nummer in!");
+        return null;
+    }
+    return s + "@leerling.vbshgoor.be"; // <-- pas domein aan
 }
 
-/* ===== UI UPDATE ===== */
-function updateDisplay() {
-  document.getElementById("emailDisplay").textContent =
-    currentEmail ? "✅ " + currentEmail : "";
+/* ✅ DIRECT naar Teams login */
+function loginTeams() {
+    let user = getUsername();
+    if (!user) return;
+
+    let url = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
+        + "?client_id=1fec8e78-bce4-4aaf-ab1b-5451cc387264"  // Teams client
+        + "&response_type=code"
+        + "&redirect_uri=https://teams.microsoft.com"
+        + "&scope=openid profile"
+        + "&login_hint=" + encodeURIComponent(user);
+
+    window.location.href = url;
 }
 
-/* ===== QR SCANNER ===== */
-function startScanner() {
-
-  const status = document.getElementById("status");
-  const reader = document.getElementById("reader");
-
-  status.textContent = "🔍 Camera starten...";
-  reader.style.display = "block";
-
-  if (scanner) {
-    scanner.stop().catch(()=>{});
-  }
-
-  scanner = new Html5Qrcode("reader");
-
-  scanner.start(
-    { facingMode: "environment" },
-    {
-      fps: 10,
-      qrbox: { width: 250, height: 250 }
-    },
-    (decodedText) => {
-
-      handleQRCode(decodedText);
-
-      scanner.stop().then(() => {
-        reader.style.display = "none";
-        status.textContent = "✅ QR-code gescand";
-      });
-
-    },
-    () => {}
-  ).catch(err => {
-    console.error(err);
-    status.textContent = "❌ Camera geblokkeerd";
-    alert("Camera werkt niet.\nGebruik deze pagina via GitHub Pages (https).");
-  });
-}
-
-/* ===== QR RESULT ===== */
-function handleQRCode(data) {
-
-  data = data.trim().toLowerCase();
-
-  if (data.includes("@")) {
-    currentEmail = data;
-  }
-  else if (/^[0-9]{6}$/.test(data)) {
-    currentEmail = "s" + data + "@leerling.gvbbooischot.be";
-  }
-  else {
-    alert("❌ QR-code ongeldig");
-    return;
-  }
-
-  document.getElementById("s").value = "";
-  updateDisplay();
-}
-
-/* ===== OPEN APPS ===== */
+/* ✅ andere apps */
 function openApp(app) {
+    let user = getUsername();
+    if (!user) return;
 
-  if (!currentEmail) {
-    alert("⚠️ Eerst scannen of S-nummer ingeven");
-    return;
-  }
+    let base = "https://portal.office.com/?login_hint=" + encodeURIComponent(user);
 
-  let url = "";
-
-  switch(app) {
-    case "teams":
-      url = "https://teams.microsoft.com/?login_hint=" + currentEmail;
-      break;
-
-    case "word":
-      url = "https://www.office.com/launch/word?auth=2&login_hint=" + currentEmail;
-      break;
-
-    case "powerpoint":
-      url = "https://www.office.com/launch/powerpoint?auth=2&login_hint=" + currentEmail;
-      break;
-
-    case "onedrive":
-      url = "https://www.office.com/launch/onedrive?auth=2&login_hint=" + currentEmail;
-      break;
-
-    case "outlook":
-      url = "https://www.office.com/launch/outlook?auth=2&login_hint=" + currentEmail;
-      break;
-  }
-
-  window.open(url, "_self"); // 👈 belangrijk voor kiosk
+    switch(app) {
+        case "teams":
+            loginTeams();
+            break;
+        case "word":
+            window.location.href = base;
+            break;
+        case "ppt":
+            window.location.href = base;
+            break;
+        case "onedrive":
+            window.location.href = base;
+            break;
+        case "outlook":
+            window.location.href = "https://outlook.office.com/mail/?login_hint=" + encodeURIComponent(user);
+            break;
+    }
 }
 
 </script>
 
 </body>
 </html>
-``

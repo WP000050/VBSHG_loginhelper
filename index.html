@@ -12,7 +12,6 @@ body {
     margin: 0;
 }
 
-/* container */
 .container {
     max-width: 900px;
     margin: 60px auto;
@@ -22,7 +21,6 @@ body {
     box-shadow: 0 6px 20px rgba(0,0,0,0.1);
 }
 
-/* titel */
 h1 {
     color: #2b4c7e;
     margin-bottom: 20px;
@@ -67,7 +65,7 @@ input {
     background: #769d44;
 }
 
-/* office kolom */
+/* office */
 .office h2 {
     margin-top: 0;
     color: #2b4c7e;
@@ -76,10 +74,6 @@ input {
 /* icoontjes */
 .icon {
     width: 20px;
-}
-
-.qr-btn {
-    background: #8eb458;
 }
 
 /* mobiel */
@@ -103,11 +97,6 @@ input {
             <input id="snummer" placeholder="Typ S-nummer...">
 
             <button class="button" onclick="loginTeams()">
-                <img class="icon" src="https://img.icons8.com/color/48/microsoft-teams.png">
-                Teams openen
-            </button>
-
-            <button class="button qr-btn">
                 📷 Scan QR-code
             </button>
         </div>
@@ -147,22 +136,25 @@ input {
 
 <script>
 
+/* 🔹 gebruikersnaam maken */
 function getUsername() {
     let s = document.getElementById("snummer").value.trim();
+
     if (!s) {
         alert("Vul je S-nummer in!");
         return null;
     }
-    return s + "@leerling.vbshgoor.be"; // <-- pas domein aan
+
+    return s + "@leerling.vbshgoor.be";
 }
 
-/* ✅ DIRECT naar Teams login */
+/* ✅ Teams via QR knop */
 function loginTeams() {
     let user = getUsername();
     if (!user) return;
 
     let url = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
-        + "?client_id=1fec8e78-bce4-4aaf-ab1b-5451cc387264"  // Teams client
+        + "?client_id=1fec8e78-bce4-4aaf-ab1b-5451cc387264"
         + "&response_type=code"
         + "&redirect_uri=https://teams.microsoft.com"
         + "&scope=openid profile"

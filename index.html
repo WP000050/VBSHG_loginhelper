@@ -5,239 +5,318 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Loginhelper</title>
 
-<!-- QR scanner library -->
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
 body {
     font-family: Segoe UI, Arial;
     background: #d8e3f0;
+    margin: 0;
+    padding: 20px;
 }
 
 .container {
-    max-width: 850px;
-    margin: 60px auto;
+    max-width: 1100px;
+    margin: auto;
     background: #f5f7fa;
     border-radius: 16px;
-    padding: 30px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    padding: 20px;
 }
 
+/* ✅ FIX layout */
 .grid {
     display: grid;
-    grid-template-columns: 1.6fr 1fr;
-    gap: 25px;
-    align-items: start;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 18px;
+}
+
+.inputblok {
+    background: #eef4fb;
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid #84a646;
 }
 
 input {
     width: 100%;
-    max-width: 100%; /* voorkomt overlappen */
-    padding: 15px;
+    padding: 14px;
+    font-size: 18px;
     border-radius: 10px;
     border: 2px solid #84a646;
-    font-size: 16px;
     box-sizing: border-box;
-
 }
 
+/* knoppen */
 .button {
     width: 100%;
-    padding: 14px;
-    margin-top: 12px;
-    border: none;
+    padding: 12px;
+    margin-top: 8px;
     border-radius: 10px;
-    background: #8eb458;
+    border: none;
+    font-size: 15px;
     color: white;
-    font-size: 16px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
 }
+
+.teams { background:#6264A7; }
+.word { background:#2B579A; }
+.ppt { background:#D24726; }
+.onedrive { background:#0078D4; }
+.outlook { background:#0072C6; }
+
+.l1 { background:#4CAF50; }
+.l2 { background:#8BC34A; }
+.l3 { background:#FFC107; }
+.l4 { background:#FF7043; }
+.l5 { background:#9C27B0; }
+.l6 { background:#3F51B5; }
+
+.k2 { background:#FF9800; }
+.k3 { background:#E91E63; }
 
 .button:hover {
-    background: #769d44;
+    opacity: 0.85;
 }
 
-.office h2 {
-    margin-top: 0;
-    color: #2b4c7e;
-}
-
-.icon {
-    width: 20px;
-}
-
-/* scanner */
 #reader {
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
-@media (max-width: 700px) {
+/* toolbox */
+.toolbox-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+/* mobiel */
+@media (max-width: 900px) {
     .grid {
         grid-template-columns: 1fr;
     }
 }
-.toolbox {
-    margin-top: 30px;
-}
-
-.toolbox h2 {
-    color: #2b4c7e;
-    margin-bottom: 15px;
-}
-
-.klassen {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-}
-    
 </style>
 </head>
 
 <body>
 
 <div class="container">
-    <h1>Loginhelper</h1>
 
-    <div class="grid">
+<h1>Loginhelper</h1>
 
-        <!-- LINKS -->
-        <div>
-            <input id="snummer" placeholder="Typ S-nummer (optioneel)…">
+<div class="grid">
 
-            <button class="button" onclick="startScan()">
-                📷 Scan QR-code
-            </button>
+<!-- ✅ BLOK 1 -->
+<div>
+<div class="inputblok">
 
-            <div id="reader"></div>
-        </div>
+<input id="snummer" placeholder="Typ S-nummer of scan QR">
 
-        <!-- RECHTS -->
-        <div class="office">
-            <h2>Office</h2>
+<button class="button" style="background:#8eb458;" onclick="startScan()">
+📷 Scan QR-code
+</button>
 
-            <button class="button" onclick="openApp('teams')">
-                <img class="icon" src="https://img.icons8.com/color/48/microsoft-teams.png">
-                Teams
-            </button>
+<div id="reader"></div>
 
-            <button class="button" onclick="openApp('word')">
-                <img class="icon" src="https://img.icons8.com/fluency/48/microsoft-word-2019.png">
-                Word
-            </button>
-
-            <button class="button" onclick="openApp('ppt')">
-                <img class="icon" src="https://img.icons8.com/fluency/48/microsoft-powerpoint-2019.png">
-                PowerPoint
-            </button>
-
-            <!-- ✅ FIXED ICONS -->
-            <button class="button" onclick="openApp('onedrive')">
-                <img class="icon" src="https://img.icons8.com/fluency/48/microsoft-onedrive-2019.png">
-                OneDrive
-            </button>
-
-            <button class="button" onclick="openApp('outlook')">
-                <img class="icon" src="https://img.icons8.com/color/48/000000/microsoft-outlook-2019.png">
-                Outlook
-            </button>
-        </div>
-<div class="toolbox">
-    <h2>Toolboxen per klas</h2>
-
-    <div class="klassen">
-
-        <button class="button" onclick="openToolbox('l1')">📘 L1</button>
-        <button class="button" onclick="openToolbox('l2')">📗 L2</button>
-        <button class="button" onclick="openToolbox('l3')">📙 L3</button>
-        <button class="button" onclick="openToolbox('l4')">📕 L4</button>
-        <button class="button" onclick="openToolbox('l5')">📓 L5</button>
-        <button class="button" onclick="openToolbox('l6')">📔 L6</button>
-
-    </div>
+</div>
 </div>
 
-    </div>
+<!-- ✅ BLOK 2 -->
+<div>
+<h2>Office</h2>
+
+<button class="button teams" onclick="openApp('teams')">Teams</button>
+<button class="button word" onclick="openApp('word')">Word</button>
+<button class="button ppt" onclick="openApp('ppt')">PowerPoint</button>
+<button class="button onedrive" onclick="openApp('onedrive')">OneDrive</button>
+<button class="button outlook" onclick="openApp('outlook')">Outlook</button>
+</div>
+
+<!-- ✅ BLOK 3 -->
+<div>
+<h2>Toolboxen</h2>
+
+<div class="toolbox-grid">
+<button class="button l1" onclick="openToolbox('l1')">L1</button>
+<button class="button l2" onclick="openToolbox('l2')">L2</button>
+<button class="button l3" onclick="openToolbox('l3')">L3</button>
+<button class="button l4" onclick="openToolbox('l4')">L4</button>
+<button class="button l5" onclick="openToolbox('l5')">L5</button>
+<button class="button l6" onclick="openToolbox('l6')">L6</button>
+
+<button class="button k2" onclick="openToolbox('k2')">K2</button>
+<button class="button k3" onclick="openToolbox('k3')">K3</button>
+</div>
+
+</div>
+
+</div>
 </div>
 
 <script>
 
-/* ✅ Teams login */
-function goToTeams(user) {
-    let url = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
-        + "?client_id=1fec8e78-bce4-4aaf-ab1b-5451cc387264"
-        + "&response_type=code"
-        + "&redirect_uri=https://teams.microsoft.com"
-        + "&scope=openid profile"
-        + "&login_hint=" + encodeURIComponent(user);
+let currentUser = "";
+let scanner = null;
 
-    window.location.href = url;
-}
-
-/* ✅ QR scanner starten */
+/* ===== BETERE SCAN ===== */
 function startScan() {
-    const html5QrCode = new Html5Qrcode("reader");
 
-    html5QrCode.start(
+    const reader = document.getElementById("reader");
+
+    reader.innerHTML = "📷 Camera starten...";
+
+    if (scanner) {
+        scanner.stop().catch(()=>{});
+    }
+
+    scanner = new Html5Qrcode("reader");
+
+    scanner.start(
         { facingMode: "environment" },
-        {
-            fps: 10,
-            qrbox: 250
-        },
+        { fps: 10, qrbox: 220 },
         (decodedText) => {
-            html5QrCode.stop();
 
-            /* verwacht: enkel S-nummer in QR */
-            let user = decodedText.trim() + "@leerling.vbshgoor.be";
+            scanner.stop().then(() => reader.innerHTML = "");
 
-            goToTeams(user);
-        },
-        (error) => {
-            // niets tonen
+            handleQR(decodedText);
+
         }
-    ).catch(err => {
-        alert("Camera kon niet gestart worden");
+    ).catch(() => {
+        alert("❌ Camera werkt niet (check HTTPS)");
     });
 }
 
-/* ✅ fallback manueel */
-function getUsername() {
-    let s = document.getElementById("snummer").value.trim();
+/* ===== BETERE QR VALIDATIE ===== */
+function handleQR(data) {
+
+    let raw = data.trim();
+    let user = "";
+
+    console.log("QR raw:", raw);
+
+    // ✅ 1. Teams URL uitlezen
+    if (raw.includes("login_hint=")) {
+
+        try {
+            let url = new URL(raw);
+            let param = url.searchParams.get("login_hint");
+
+            if (param) {
+                user = decodeURIComponent(param).trim().toLowerCase();
+            }
+
+        } catch {
+            let match = raw.match(/login_hint=([^&]+)/);
+            if (match && match[1]) {
+                user = decodeURIComponent(match[1]).trim().toLowerCase();
+            }
+        }
+    }
+
+    // ✅ 2. email of tekst
+    else {
+        user = raw.replace(/\s/g, "").toLowerCase();
+    }
+
+    // ✅ 🧠 CORRECTIE: voeg automatisch "s" toe indien nodig
+    let match = user.match(/^([0-9]{6})@leerling\.vbshgoor\.be$/);
+    if (match) {
+        user = "s" + match[1] + "@leerling.vbshgoor.be";
+    }
+
+    let match2 = user.match(/^[0-9]{6}$/);
+    if (match2) {
+        user = "s" + user + "@leerling.vbshgoor.be";
+    }
+
+    // ✅ finale check
+    if (/^s[0-9]{6}@leerling\.vbshgoor\.be$/.test(user)) {
+        console.log("✅ Herkend:", user);
+        goToTeams(user);
+        return;
+    }
+
+    alert("❌ QR-code niet herkend:\n" + raw);
+}
+
+/* ===== INPUT ===== */
+function getUserFromInput() {
+
+    let s = document.getElementById("snummer").value.trim().toLowerCase();
+
     if (!s) {
-        alert("Vul je S-nummer in!");
+        alert("⚠️ Typ S-nummer of scan QR");
         return null;
     }
-    return s + "@leerling.vbshgoor.be";
+
+    if (s.includes("@")) return s;
+
+    if (/^[0-9]{6}$/.test(s)) {
+        return "s" + s + "@leerling.vbshgoor.be";
+    }
+
+    alert("⚠️ Ongeldig nummer");
+    return null;
 }
 
+/* ===== TEAMS ===== */
+function goToTeams(user) {
+
+    let url = "https://teams.microsoft.com/?login_hint=" + user;
+    window.location.href = url;
+}
+
+/* ===== OFFICE ===== */
 function openApp(app) {
-    let user = getUsername();
+
+    let user = getUserFromInput();
     if (!user) return;
 
-    let base = "https://portal.office.com/?login_hint=" + encodeURIComponent(user);
+    let url = "";
 
-    if (app === "teams") goToTeams(user);
-    if (app === "outlook") window.location.href = "https://outlook.office.com/mail/?login_hint=" + user;
-    else window.location.href = base;
+    switch(app) {
+
+        case "teams":
+            goToTeams(user);
+            return;
+
+        case "word":
+            url = "https://www.office.com/launch/word?auth=2&login_hint=" + user;
+            break;
+
+        case "ppt":
+            url = "https://www.office.com/launch/powerpoint?auth=2&login_hint=" + user;
+            break;
+
+        case "onedrive":
+            url = "https://www.office.com/launch/onedrive?auth=2&login_hint=" + user;
+            break;
+
+        case "outlook":
+            url = "https://outlook.office.com/mail/?login_hint=" + user;
+            break;
+    }
+
+    window.location.href = url;
 }
-function openToolbox(klas) {
+/* ===== TOOLBOX ===== */
+function openToolbox(k) {
 
     let links = {
-        l1: "https://www.canva.com/design/DAFUpBzBHGs/6wyDjMD8Qlq2vjbS9nKoog/view?utm_content=DAFUpBzBHGs&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hc1ca32412a",
-        l2: "https://www.canva.com/design/DAFT_E7BGO8/g5t-f42RS_2QKPxb2QthBw/view?utm_content=DAFT_E7BGO8&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb8c5665ae9",
-        l3: "https://www.canva.com/design/DAFULuLHwxo/D3B5GonSVhfqEqwaaD6mbw/view?utm_content=DAFULuLHwxo&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h95805fc6b0",
-        l4: "https://www.canva.com/design/DAGT1qUzh9s/b2FFy77S4U4Irmc41WYAeg/view?utm_content=DAGT1qUzh9s&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hf21a64cd70",
-        l5: "https://www.canva.com/design/DAGT6iZW5Mw/K9Ui3yxsx0uSSehxgq2olg/view?utm_content=DAGT6iZW5Mw&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h0acbdae499",
-        l6: "https://www.canva.com/design/DAFT_YiSTuo/B0CORzvLFmvSUMRDyGrfLA/view?utm_content=DAFT_YiSTuo&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hf18b776dfd"
+        l1: "https://www.canva.com/design/DAFUpBzBHGs/6wyDjMD8Qlq2vjbS9nKoog/view",
+        l2: "https://www.canva.com/design/DAFT_E7BGO8/g5t-f42RS_2QKPxb2QthBw/view",
+        l3: "https://www.canva.com/design/DAFULuLHwxo/D3B5GonSVhfqEqwaaD6mbw/view",
+        l4: "https://www.canva.com/design/DAGT1qUzh9s/b2FFy77S4U4Irmc41WYAeg/view",
+        l5: "https://www.canva.com/design/DAGT6iZW5Mw/K9Ui3yxsx0uSSehxgq2olg/view",
+        l6: "https://www.canva.com/design/DAFT_YiSTuo/B0CORzvLFmvSUMRDyGrfLA/view",
+
+        k2: "https://canva.link/c2soquwfe8ut",
+        k3: "https://canva.link/lekkdwo40lv1h7q"
     };
 
-    window.location.href = links[klas];
+    window.location.href = links[k];
 }
-``
+
 </script>
 
 </body>

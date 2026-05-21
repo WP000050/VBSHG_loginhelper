@@ -80,6 +80,21 @@ input {
         grid-template-columns: 1fr;
     }
 }
+.toolbox {
+    margin-top: 30px;
+}
+
+.toolbox h2 {
+    color: #2b4c7e;
+    margin-bottom: 15px;
+}
+
+.klassen {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+    
 </style>
 </head>
 
@@ -131,6 +146,20 @@ input {
                 Outlook
             </button>
         </div>
+<div class="toolbox">
+    <h2>Toolboxen per klas</h2>
+
+    <div class="klassen">
+
+        <button class="button" onclick="openToolbox('l1')">📘 L1</button>
+        <button class="button" onclick="openToolbox('l2')">📗 L2</button>
+        <button class="button" onclick="openToolbox('l3')">📙 L3</button>
+        <button class="button" onclick="openToolbox('l4')">📕 L4</button>
+        <button class="button" onclick="openToolbox('l5')">📓 L5</button>
+        <button class="button" onclick="openToolbox('l6')">📔 L6</button>
+
+    </div>
+</div>
 
     </div>
 </div>
@@ -195,7 +224,20 @@ function openApp(app) {
     if (app === "outlook") window.location.href = "https://outlook.office.com/mail/?login_hint=" + user;
     else window.location.href = base;
 }
+function openToolbox(klas) {
 
+    let links = {
+        l1: "https://www.canva.com/design/DAFUpBzBHGs/6wyDjMD8Qlq2vjbS9nKoog/view?utm_content=DAFUpBzBHGs&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hc1ca32412a",
+        l2: "https://www.canva.com/design/DAFT_E7BGO8/g5t-f42RS_2QKPxb2QthBw/view?utm_content=DAFT_E7BGO8&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb8c5665ae9",
+        l3: "https://www.canva.com/design/DAFULuLHwxo/D3B5GonSVhfqEqwaaD6mbw/view?utm_content=DAFULuLHwxo&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h95805fc6b0",
+        l4: "https://www.canva.com/design/DAGT1qUzh9s/b2FFy77S4U4Irmc41WYAeg/view?utm_content=DAGT1qUzh9s&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hf21a64cd70",
+        l5: "https://www.canva.com/design/DAGT6iZW5Mw/K9Ui3yxsx0uSSehxgq2olg/view?utm_content=DAGT6iZW5Mw&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h0acbdae499",
+        l6: "https://www.canva.com/design/DAFT_YiSTuo/B0CORzvLFmvSUMRDyGrfLA/view?utm_content=DAFT_YiSTuo&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hf18b776dfd"
+    };
+
+    window.location.href = links[klas];
+}
+``
 </script>
 
 </body>

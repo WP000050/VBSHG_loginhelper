@@ -23,10 +23,23 @@ body {
     padding: 20px;
 }
 
-/* ✅ FIX layout */
+/* ✅ CAMERA bovenaan */
+.camera-blok {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.camera-blok .inputblok {
+    width: 420px;
+    max-width: 100%;
+}
+
+/* ✅ GRID onderaan */
 .grid {
     display: grid;
-    grid-template-columns: 1.3fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 18px;
 }
 
@@ -80,6 +93,13 @@ input {
 
 #reader {
     margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+#reader video {
+    border-radius: 12px;
+    border: 3px solid #84a646;
 }
 
 /* toolbox */
@@ -104,24 +124,25 @@ input {
 
 <h1>Loginhelper</h1>
 
+<!-- ✅ CAMERA BLOK -->
+<div class="camera-blok">
+    <div class="inputblok">
+
+        <input id="snummer" placeholder="Typ S-nummer of scan QR">
+
+        <button class="button" style="background:#8eb458;" onclick="startScan()">
+            📷 Scan QR-code
+        </button>
+
+        <div id="reader"></div>
+
+    </div>
+</div>
+
+<!-- ✅ GRID -->
 <div class="grid">
 
-<!-- ✅ BLOK 1 -->
-<div>
-<div class="inputblok">
-
-<input id="snummer" placeholder="Typ S-nummer of scan QR">
-
-<button class="button" style="background:#8eb458;" onclick="startScan()">
-📷 Scan QR-code
-</button>
-
-<div id="reader"></div>
-
-</div>
-</div>
-
-<!-- ✅ BLOK 2 -->
+<!-- ✅ OFFICE -->
 <div>
 <h2>Office</h2>
 
@@ -132,7 +153,7 @@ input {
 <button class="button outlook" onclick="openApp('outlook')">Outlook</button>
 </div>
 
-<!-- ✅ BLOK 3 -->
+<!-- ✅ TOOLBOX -->
 <div>
 <h2>Toolboxen</h2>
 
@@ -155,14 +176,12 @@ input {
 
 <script>
 
-let currentUser = "";
 let scanner = null;
 
-/* ===== BETERE SCAN ===== */
+/* ===== SCAN ===== */
 function startScan() {
 
     const reader = document.getElementById("reader");
-
     reader.innerHTML = "📷 Camera starten...";
 
     if (scanner) {
@@ -179,64 +198,39 @@ function startScan() {
             scanner.stop().then(() => reader.innerHTML = "");
 
             handleQR(decodedText);
-
         }
     ).catch(() => {
         alert("❌ Camera werkt niet (check HTTPS)");
     });
 }
 
-/* ===== BETERE QR VALIDATIE ===== */
+/* ===== QR ===== */
 function handleQR(data) {
 
     let raw = data.trim();
     let user = "";
 
-    console.log("QR raw:", raw);
-
-    // ✅ 1. Teams URL uitlezen
     if (raw.includes("login_hint=")) {
-
         try {
             let url = new URL(raw);
-            let param = url.searchParams.get("login_hint");
-
-            if (param) {
-                user = decodeURIComponent(param).trim().toLowerCase();
-            }
-
-        } catch {
-            let match = raw.match(/login_hint=([^&]+)/);
-            if (match && match[1]) {
-                user = decodeURIComponent(match[1]).trim().toLowerCase();
-            }
-        }
+            user = url.searchParams.get("login_hint");
+        } catch {}
+    } else {
+        user = raw;
     }
 
-    // ✅ 2. email of tekst
-    else {
-        user = raw.replace(/\s/g, "").toLowerCase();
-    }
+    user = (user || "").replace(/\s/g, "").toLowerCase();
 
-    // ✅ 🧠 CORRECTIE: voeg automatisch "s" toe indien nodig
-    let match = user.match(/^([0-9]{6})@leerling\.vbshgoor\.be$/);
-    if (match) {
-        user = "s" + match[1] + "@leerling.vbshgoor.be";
-    }
-
-    let match2 = user.match(/^[0-9]{6}$/);
-    if (match2) {
+    if (/^[0-9]{6}$/.test(user)) {
         user = "s" + user + "@leerling.vbshgoor.be";
     }
 
-    // ✅ finale check
     if (/^s[0-9]{6}@leerling\.vbshgoor\.be$/.test(user)) {
-        console.log("✅ Herkend:", user);
         goToTeams(user);
         return;
     }
 
-    alert("❌ QR-code niet herkend:\n" + raw);
+    alert("❌ QR-code niet herkend");
 }
 
 /* ===== INPUT ===== */
@@ -259,46 +253,31 @@ function getUserFromInput() {
     return null;
 }
 
-/* ===== TEAMS ===== */
+/* ===== LINKS ===== */
 function goToTeams(user) {
-
-    let url = "https://teams.microsoft.com/?login_hint=" + user;
-    window.location.href = url;
+    window.location.href = "https://teams.microsoft.com/?login_hint=" + user;
 }
 
-/* ===== OFFICE ===== */
 function openApp(app) {
 
     let user = getUserFromInput();
     if (!user) return;
 
-    let url = "";
+    let base = {
+        word: "https://www.office.com/launch/word?auth=2&login_hint=",
+        ppt: "https://www.office.com/launch/powerpoint?auth=2&login_hint=",
+        onedrive: "https://www.office.com/launch/onedrive?auth=2&login_hint=",
+        outlook: "https://outlook.office.com/mail/?login_hint="
+    };
 
-    switch(app) {
-
-        case "teams":
-            goToTeams(user);
-            return;
-
-        case "word":
-            url = "https://www.office.com/launch/word?auth=2&login_hint=" + user;
-            break;
-
-        case "ppt":
-            url = "https://www.office.com/launch/powerpoint?auth=2&login_hint=" + user;
-            break;
-
-        case "onedrive":
-            url = "https://www.office.com/launch/onedrive?auth=2&login_hint=" + user;
-            break;
-
-        case "outlook":
-            url = "https://outlook.office.com/mail/?login_hint=" + user;
-            break;
+    if (app === "teams") {
+        goToTeams(user);
+        return;
     }
 
-    window.location.href = url;
+    window.location.href = base[app] + user;
 }
+
 /* ===== TOOLBOX ===== */
 function openToolbox(k) {
 
@@ -309,7 +288,6 @@ function openToolbox(k) {
         l4: "https://www.canva.com/design/DAGT1qUzh9s/b2FFy77S4U4Irmc41WYAeg/view",
         l5: "https://www.canva.com/design/DAGT6iZW5Mw/K9Ui3yxsx0uSSehxgq2olg/view",
         l6: "https://www.canva.com/design/DAFT_YiSTuo/B0CORzvLFmvSUMRDyGrfLA/view",
-
         k2: "https://canva.link/c2soquwfe8ut",
         k3: "https://canva.link/lekkdwo40lv1h7q"
     };

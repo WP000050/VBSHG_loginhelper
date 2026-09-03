@@ -37,23 +37,24 @@
 
             --text: #263c3c;
             --muted: #667a79;
-            --border: #a8dcd7;
+            --border: #9ed9d5;
 
-            --shadow: 0 14px 36px rgba(36, 75, 73, 0.15);
+            --shadow: 0 10px 28px rgba(36, 75, 73, 0.15);
         }
 
         * {
             box-sizing: border-box;
         }
 
-        html {
+        html,
+        body {
+            width: 100%;
             min-height: 100%;
+            margin: 0;
         }
 
         body {
-            min-height: 100vh;
-            margin: 0;
-            padding: 18px;
+            padding: 10px;
 
             color: var(--text);
 
@@ -65,12 +66,12 @@
             background:
                 radial-gradient(
                     circle at top left,
-                    rgba(249, 200, 70, 0.30),
-                    transparent 32%
+                    rgba(249, 200, 70, 0.25),
+                    transparent 31%
                 ),
                 radial-gradient(
                     circle at bottom right,
-                    rgba(66, 168, 161, 0.30),
+                    rgba(66, 168, 161, 0.27),
                     transparent 38%
                 ),
                 var(--background);
@@ -87,48 +88,47 @@
 
         /* =====================================================
            HOOFDCONTAINER
+           Compact en breed voor een 11-inch Chromebook
            ===================================================== */
 
         .container {
-            width: 100%;
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 20px;
+            width: min(1240px, 100%);
+            min-height: calc(100vh - 20px);
 
-            background: rgba(255, 255, 255, 0.96);
+            margin: 0 auto;
+            padding: 14px 16px;
+
+            background: rgba(255, 255, 255, 0.97);
 
             border: 3px solid var(--border);
-            border-radius: 26px;
+            border-radius: 22px;
 
             box-shadow: var(--shadow);
         }
 
         /* =====================================================
-           LOGO EN TITEL
+           BOVENSTE BALK
+           Logo, titel en invoer naast elkaar
            ===================================================== */
 
-        .header {
-            display: flex;
+        .topbar {
+            display: grid;
+            grid-template-columns: 210px minmax(180px, 1fr) minmax(420px, 540px);
             align-items: center;
-            justify-content: center;
-            gap: 22px;
+            gap: 18px;
 
-            margin-bottom: 18px;
+            margin-bottom: 14px;
         }
 
         .logo-box {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
 
-            width: 190px;
-            height: 125px;
-            flex: 0 0 190px;
+            width: 210px;
+            height: 85px;
 
-            padding: 4px;
-
-            background: transparent;
-            border-radius: 22px;
+            overflow: hidden;
         }
 
         .logo-box img {
@@ -138,38 +138,26 @@
             height: 100%;
 
             object-fit: contain;
+            object-position: left center;
         }
 
-        .header-text h1 {
+        .page-title {
             margin: 0;
 
             color: var(--turquoise-dark);
-            font-size: clamp(32px, 5vw, 48px);
-            line-height: 1.05;
-        }
 
-        .header-text p {
-            margin: 8px 0 0;
-
-            color: var(--muted);
-            font-size: 17px;
+            font-size: clamp(30px, 4vw, 44px);
+            font-weight: 800;
+            line-height: 1;
         }
 
         /* =====================================================
-           LOGINBLOK
+           LOGINBLOK BOVENAAN
            ===================================================== */
-
-        .login-section {
-            display: flex;
-            justify-content: center;
-
-            margin-bottom: 20px;
-        }
 
         .login-card {
             width: 100%;
-            max-width: 500px;
-            padding: 16px;
+            padding: 10px;
 
             background:
                 linear-gradient(
@@ -178,39 +166,31 @@
                     var(--surface)
                 );
 
-            border: 3px solid var(--turquoise);
-            border-radius: 18px;
-        }
-
-        .input-label {
-            display: block;
-
-            margin-bottom: 8px;
-
-            color: var(--turquoise-dark);
-            font-size: 16px;
-            font-weight: 800;
+            border: 2px solid var(--turquoise);
+            border-radius: 15px;
         }
 
         .input-row {
-            display: flex;
-            gap: 8px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 48px 155px;
+            gap: 7px;
         }
 
         #snummer {
             width: 100%;
             min-width: 0;
+            height: 46px;
 
-            padding: 14px 16px;
+            padding: 9px 13px;
 
             color: var(--text);
-            font-size: 19px;
+            font-size: 17px;
             font-weight: 600;
 
             background: #ffffff;
 
             border: 2px solid var(--border);
-            border-radius: 12px;
+            border-radius: 10px;
 
             outline: none;
 
@@ -223,7 +203,7 @@
             border-color: var(--turquoise);
 
             box-shadow:
-                0 0 0 4px rgba(66, 168, 161, 0.20);
+                0 0 0 3px rgba(66, 168, 161, 0.20);
         }
 
         #snummer::placeholder {
@@ -232,118 +212,118 @@
         }
 
         .clear-button {
-            width: 54px;
-            flex: 0 0 54px;
+            width: 48px;
+            height: 46px;
+
+            padding: 0;
 
             color: #ffffff;
             background: var(--pink);
 
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
 
-            font-size: 25px;
+            font-size: 24px;
             font-weight: 800;
-
-            cursor: pointer;
-        }
-
-        .clear-button:hover {
-            filter: brightness(0.94);
-        }
-
-        .input-help {
-            margin: 8px 0 0;
-
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        /* =====================================================
-           ALGEMENE KNOPPEN
-           ===================================================== */
-
-        .button {
-            width: 100%;
-            min-height: 48px;
-
-            padding: 12px 14px;
-
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: 700;
-
-            border: none;
-            border-radius: 12px;
-
-            box-shadow:
-                0 5px 12px rgba(0, 0, 0, 0.12);
+            line-height: 1;
 
             cursor: pointer;
 
             transition:
                 transform 0.18s ease,
-                filter 0.18s ease,
-                box-shadow 0.18s ease;
+                filter 0.18s ease;
         }
 
-        .button:hover {
-            filter: brightness(1.06);
-            transform: translateY(-2px);
-
-            box-shadow:
-                0 8px 16px rgba(0, 0, 0, 0.15);
-        }
-
-        .button:active {
-            transform: translateY(0);
-        }
-
-        .button:focus-visible,
-        .clear-button:focus-visible,
-        .shape-button:focus-visible {
-            outline: 4px solid rgba(249, 200, 70, 0.75);
-            outline-offset: 3px;
+        .clear-button:hover {
+            filter: brightness(0.94);
+            transform: translateY(-1px);
         }
 
         .scan-button {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 9px;
+            gap: 7px;
 
-            margin-top: 10px;
+            width: 155px;
+            height: 46px;
+            padding: 0 11px;
 
+            color: #ffffff;
             background:
                 linear-gradient(
                     135deg,
                     var(--turquoise),
                     var(--turquoise-dark)
                 );
+
+            border: none;
+            border-radius: 10px;
+
+            font-size: 14px;
+            font-weight: 750;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 4px 10px rgba(0, 0, 0, 0.12);
+
+            transition:
+                transform 0.18s ease,
+                filter 0.18s ease;
+        }
+
+        .scan-button:hover {
+            filter: brightness(1.06);
+            transform: translateY(-1px);
+        }
+
+        .scanner-actions {
+            display: none;
+        }
+
+        .scanner-actions.visible {
+            display: block;
         }
 
         .stop-button {
-            margin-top: 8px;
+            width: 100%;
+            min-height: 36px;
+
+            margin-top: 7px;
+            padding: 7px 12px;
+
+            color: #ffffff;
             background: var(--pink);
+
+            border: none;
+            border-radius: 9px;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            cursor: pointer;
         }
 
         /* =====================================================
-           MELDINGEN
+           STATUSMELDINGEN
+           Alleen zichtbaar wanneer nodig
            ===================================================== */
 
         .status {
             display: none;
 
-            margin-top: 10px;
-            padding: 10px 12px;
+            margin-top: 7px;
+            padding: 7px 10px;
 
             color: var(--text);
-            font-size: 15px;
-            font-weight: 650;
+            font-size: 13px;
+            font-weight: 600;
 
             background: #fff4d5;
 
-            border: 2px solid #f2ce70;
-            border-radius: 10px;
+            border: 1px solid #f2ce70;
+            border-radius: 8px;
         }
 
         .status.visible {
@@ -368,14 +348,14 @@
 
         #reader {
             width: 100%;
-            max-width: 400px;
+            max-width: 340px;
 
-            margin: 12px auto 0;
+            margin: 8px auto 0;
 
             overflow: hidden;
 
             background: #ffffff;
-            border-radius: 14px;
+            border-radius: 10px;
         }
 
         #reader:empty {
@@ -388,8 +368,8 @@
             width: 100%;
             max-width: 100%;
 
-            border: 3px solid var(--turquoise);
-            border-radius: 12px;
+            border: 2px solid var(--turquoise);
+            border-radius: 10px;
         }
 
         #reader img {
@@ -397,37 +377,31 @@
         }
 
         #reader button {
-            padding: 9px 12px;
+            padding: 7px 10px;
 
             color: #ffffff;
             background: var(--turquoise);
 
             border: none;
-            border-radius: 8px;
+            border-radius: 7px;
 
             cursor: pointer;
         }
 
-        .scanner-actions {
-            display: none;
-        }
-
-        .scanner-actions.visible {
-            display: block;
-        }
-
         /* =====================================================
-           TWEE HOOFDKOLOMMEN
+           HOOFDINHOUD
+           Twee brede kolommen
            ===================================================== */
 
         .main-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 14px;
         }
 
         .panel {
-            padding: 17px;
+            min-height: 390px;
+            padding: 14px;
 
             background:
                 linear-gradient(
@@ -437,18 +411,20 @@
                 );
 
             border: 2px solid var(--border);
-            border-radius: 18px;
+            border-radius: 16px;
         }
 
         .panel-title {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 9px;
 
-            margin: 0 0 14px;
+            margin: 0 0 11px;
 
             color: var(--turquoise-dark);
-            font-size: 23px;
+
+            font-size: 21px;
+            font-weight: 800;
         }
 
         .panel-title-icon {
@@ -456,22 +432,74 @@
             align-items: center;
             justify-content: center;
 
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
 
             color: #ffffff;
             background: var(--turquoise);
 
-            border-radius: 12px;
+            border-radius: 10px;
+
+            font-size: 20px;
+            font-weight: 800;
         }
 
         /* =====================================================
-           MICROSOFT 365-KNOPPEN
+           ALGEMENE KNOPPEN
+           ===================================================== */
+
+        .button {
+            width: 100%;
+            min-height: 46px;
+
+            padding: 10px 12px;
+
+            color: #ffffff;
+
+            font-size: 15px;
+            font-weight: 750;
+
+            border: none;
+            border-radius: 11px;
+
+            box-shadow:
+                0 4px 10px rgba(0, 0, 0, 0.12);
+
+            cursor: pointer;
+
+            transition:
+                transform 0.18s ease,
+                filter 0.18s ease,
+                box-shadow 0.18s ease;
+        }
+
+        .button:hover {
+            filter: brightness(1.06);
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 7px 14px rgba(0, 0, 0, 0.15);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button:focus-visible,
+        .clear-button:focus-visible,
+        .scan-button:focus-visible,
+        .shape-button:focus-visible {
+            outline: 4px solid rgba(249, 200, 70, 0.75);
+            outline-offset: 3px;
+        }
+
+        /* =====================================================
+           MICROSOFT 365
            ===================================================== */
 
         .office-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 9px;
         }
 
@@ -502,8 +530,13 @@
 
         .toolbox-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 9px;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 7px;
+        }
+
+        .toolbox-grid .button {
+            min-height: 44px;
+            padding: 8px 5px;
         }
 
         .l1 {
@@ -535,21 +568,14 @@
            KLEUTERTOOLBOXEN
            ===================================================== */
 
-        .kleuter-title {
-            margin: 19px 0 12px;
-
-            color: var(--turquoise-dark);
-            font-size: 19px;
-            text-align: center;
-        }
-
         .kleuter-tools {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 34px;
+            gap: 52px;
 
-            min-height: 165px;
+            min-height: 235px;
+            padding-top: 12px;
         }
 
         .shape-button {
@@ -567,7 +593,7 @@
 
             filter:
                 drop-shadow(
-                    0 8px 7px rgba(0, 0, 0, 0.20)
+                    0 7px 7px rgba(0, 0, 0, 0.20)
                 );
 
             transition:
@@ -576,12 +602,12 @@
         }
 
         .shape-button:hover {
-            transform: scale(1.07);
+            transform: scale(1.06);
 
             filter:
                 brightness(1.05)
                 drop-shadow(
-                    0 11px 8px rgba(0, 0, 0, 0.23)
+                    0 10px 8px rgba(0, 0, 0, 0.23)
                 );
         }
 
@@ -597,12 +623,13 @@
         }
 
         /* =====================================================
-           K2: GROTE STERVORM ZONDER KLEINE STER
+           K2: ÉÉN GROTE STER
+           Geen kleine ster binnenin
            ===================================================== */
 
         .star-button {
-            width: 145px;
-            height: 145px;
+            width: 150px;
+            height: 150px;
             padding: 24px;
 
             background:
@@ -631,10 +658,10 @@
            ===================================================== */
 
         .fish-button {
-            width: 175px;
-            height: 122px;
+            width: 190px;
+            height: 132px;
 
-            padding: 15px 30px 15px 48px;
+            padding: 15px 31px 15px 50px;
 
             background:
                 linear-gradient(
@@ -661,8 +688,8 @@
 
         .fish-eye {
             position: absolute;
-            top: 29px;
-            right: 28px;
+            top: 31px;
+            right: 31px;
 
             width: 16px;
             height: 16px;
@@ -675,10 +702,10 @@
 
         .fish-fin {
             position: absolute;
-            bottom: 17px;
-            left: 82px;
+            bottom: 19px;
+            left: 89px;
 
-            width: 29px;
+            width: 30px;
             height: 23px;
 
             background: rgba(255, 255, 255, 0.50);
@@ -691,40 +718,146 @@
         }
 
         /* =====================================================
-           RESPONSIEVE WEERGAVE
+           COMPACTE CHROMEBOOKWEERGAVE
            ===================================================== */
 
-        @media (max-width: 900px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 620px) {
-            body {
-                padding: 9px;
-            }
-
+        @media (max-width: 1100px) {
             .container {
-                padding: 13px;
-                border-radius: 20px;
+                padding: 12px;
             }
 
-            .header {
-                flex-direction: column;
-                gap: 8px;
-
-                text-align: center;
+            .topbar {
+                grid-template-columns: 180px minmax(160px, 0.8fr) minmax(390px, 1.4fr);
+                gap: 12px;
             }
 
             .logo-box {
                 width: 180px;
-                height: 115px;
-                flex-basis: 115px;
+                height: 75px;
             }
 
-            .header-text p {
-                font-size: 15px;
+            .page-title {
+                font-size: 34px;
+            }
+
+            .panel {
+                min-height: 365px;
+            }
+
+            .kleuter-tools {
+                min-height: 215px;
+            }
+        }
+
+        @media (max-width: 850px) {
+            .topbar {
+                grid-template-columns: 165px 1fr;
+            }
+
+            .logo-box {
+                width: 165px;
+            }
+
+            .login-card {
+                grid-column: 1 / -1;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .toolbox-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .kleuter-tools {
+                gap: 18px;
+            }
+
+            .star-button {
+                width: 125px;
+                height: 125px;
+            }
+
+            .fish-button {
+                width: 155px;
+                height: 108px;
+            }
+
+            .fish-eye {
+                top: 25px;
+                right: 25px;
+            }
+
+            .fish-fin {
+                bottom: 15px;
+                left: 73px;
+            }
+        }
+
+        @media (max-width: 680px) {
+            body {
+                padding: 6px;
+            }
+
+            .container {
+                min-height: calc(100vh - 12px);
+                padding: 10px;
+                border-radius: 17px;
+            }
+
+            .topbar {
+                grid-template-columns: 135px 1fr;
+                gap: 8px;
+            }
+
+            .logo-box {
+                width: 135px;
+                height: 65px;
+            }
+
+            .page-title {
+                font-size: 29px;
+            }
+
+            .input-row {
+                grid-template-columns: minmax(0, 1fr) 46px;
+            }
+
+            .scan-button {
+                grid-column: 1 / -1;
+
+                width: 100%;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .panel {
+                min-height: auto;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .topbar {
+                grid-template-columns: 1fr;
+                justify-items: center;
+            }
+
+            .logo-box {
+                justify-content: center;
+
+                width: 170px;
+                height: 75px;
+            }
+
+            .logo-box img {
+                object-position: center;
+            }
+
+            .page-title {
+                text-align: center;
             }
 
             .office-grid {
@@ -736,36 +869,11 @@
             }
 
             .toolbox-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
-            .kleuter-tools {
-                gap: 16px;
-            }
-
-            .star-button {
-                width: 125px;
-                height: 125px;
-            }
-
-            .fish-button {
-                width: 150px;
-                height: 108px;
-            }
-
-            .fish-eye {
-                top: 26px;
-                right: 24px;
-            }
-        }
-
-        @media (max-width: 390px) {
             .kleuter-tools {
                 flex-direction: column;
-            }
-
-            .toolbox-grid {
-                grid-template-columns: 1fr 1fr;
             }
         }
 
@@ -784,39 +892,20 @@
     <main class="container">
 
         <!-- =================================================
-             LOGO EN TITEL
+             COMPACTE BOVENBALK
              ================================================= -->
 
-        <header class="header">
+        <header class="topbar">
 
             <div class="logo-box">
-                https://github.com/WP000050/VBSHG_loginhelper/blob/5bea30b7e425812a3818cc1005183b536944b37f/pip%26japi.png?raw=true
+                ./pip&amp;japi.png
             </div>
 
-            <div class="header-text">
-                <h1>Loginhelper</h1>
-
-                <p>
-                    Vul je S-nummer in en kies waar je naartoe wilt.
-                </p>
-            </div>
-
-        </header>
-
-        <!-- =================================================
-             LOGIN EN QR-CODESCANNER
-             ================================================= -->
-
-        <section class="login-section">
+            <h1 class="page-title">
+                Loginhelper
+            </h1>
 
             <div class="login-card">
-
-                <label
-                    class="input-label"
-                    for="snummer"
-                >
-                    Mijn S-nummer
-                </label>
 
                 <div class="input-row">
 
@@ -827,9 +916,9 @@
                         autocomplete="username"
                         autocapitalize="none"
                         spellcheck="false"
-                        placeholder="Bijvoorbeeld s123456 of 123456"
+                        placeholder="S-nummer"
                         maxlength="60"
-                        aria-describedby="inputHelp"
+                        aria-label="S-nummer"
                     >
 
                     <button
@@ -842,30 +931,23 @@
                         ×
                     </button>
 
+                    <button
+                        class="scan-button"
+                        type="button"
+                        onclick="startScan()"
+                    >
+                        <span aria-hidden="true">📷</span>
+                        <span>Scan QR-code</span>
+                    </button>
+
                 </div>
-
-                <p
-                    id="inputHelp"
-                    class="input-help"
-                >
-                    Het S-nummer mag met of zonder de letter S worden ingevuld.
-                </p>
-
-                <button
-                    class="button scan-button"
-                    type="button"
-                    onclick="startScan()"
-                >
-                    <span aria-hidden="true">📷</span>
-                    <span>Scan QR-code</span>
-                </button>
 
                 <div
                     id="scannerActions"
                     class="scanner-actions"
                 >
                     <button
-                        class="button stop-button"
+                        class="stop-button"
                         type="button"
                         onclick="stopScan()"
                     >
@@ -887,10 +969,10 @@
 
             </div>
 
-        </section>
+        </header>
 
         <!-- =================================================
-             KNOPPEN
+             MICROSOFT 365 EN TOOLBOXEN
              ================================================= -->
 
         <div class="main-grid">
@@ -1021,13 +1103,9 @@
 
                 </div>
 
-                <h3 class="kleuter-title">
-                    Kleutertoolboxen
-                </h3>
-
                 <div class="kleuter-tools">
 
-                    <!-- K2: stervorm, zonder kleine ster -->
+                    <!-- K2: grote stervorm, zonder kleine ster -->
                     <button
                         class="shape-button star-button"
                         type="button"
@@ -1096,6 +1174,28 @@
 
         const scannerActionsElement =
             document.getElementById("scannerActions");
+
+        const schoolLogoElement =
+            document.getElementById("schoolLogo");
+
+        /* =====================================================
+           LOGOCONTROLE
+           ===================================================== */
+
+        schoolLogoElement.addEventListener(
+            "error",
+            function () {
+                /*
+                 * Geen fouttekst op de pagina tonen.
+                 * Alleen een melding in de browserconsole.
+                 */
+                schoolLogoElement.style.display = "none";
+
+                console.error(
+                    "Logo niet gevonden. Controleer of pip&japi.png in dezelfde map staat als index.html."
+                );
+            }
+        );
 
         /* =====================================================
            INVOERVELD
@@ -1187,8 +1287,7 @@
                 );
 
             /*
-             * Invoer zonder S:
-             * 123456
+             * Voorbeeld: 123456
              */
             if (digitsOnlyPattern.test(user)) {
                 return (
@@ -1200,8 +1299,7 @@
             }
 
             /*
-             * Invoer met S:
-             * s123456
+             * Voorbeeld: s123456
              */
             if (sNumberPattern.test(user)) {
                 return (
@@ -1212,7 +1310,7 @@
             }
 
             /*
-             * Volledig account:
+             * Voorbeeld:
              * s123456@leerling.vbshgoor.be
              */
             if (fullAccountPattern.test(user)) {
@@ -1230,7 +1328,7 @@
 
             if (!cleanUserValue(originalValue)) {
                 showStatus(
-                    "Vul eerst je S-nummer in of scan je QR-code.",
+                    "Vul eerst een S-nummer in.",
                     "error"
                 );
 
@@ -1244,7 +1342,7 @@
 
             if (!username) {
                 showStatus(
-                    "Ongeldig S-nummer. Gebruik bijvoorbeeld 123456 of s123456.",
+                    "Ongeldig S-nummer.",
                     "error"
                 );
 
@@ -1254,12 +1352,15 @@
                 return null;
             }
 
-            inputElement.value = username;
+            /*
+             * Het invoerveld blijft compact.
+             * Alleen het S-nummer wordt getoond,
+             * niet het volledige e-mailadres.
+             */
+            const shortNumber =
+                username.split("@")[0];
 
-            showStatus(
-                "Account herkend: " + username,
-                "success"
-            );
+            inputElement.value = shortNumber;
 
             return username;
         }
@@ -1279,11 +1380,11 @@
             let possibleUser = raw;
 
             /*
-             * Probeer login_hint uit een volledige URL
-             * te halen.
+             * Login_hint uit een URL halen.
              */
             try {
-                const scannedUrl = new URL(raw);
+                const scannedUrl =
+                    new URL(raw);
 
                 const loginHint =
                     scannedUrl.searchParams.get(
@@ -1295,14 +1396,14 @@
                 }
             } catch (error) {
                 /*
-                 * De inhoud is geen URL.
-                 * Behandel ze als gewone tekst.
+                 * Geen URL.
+                 * Behandel de inhoud als gewone tekst.
                  */
             }
 
             /*
-             * Ondersteuning voor teksten waarin
-             * login_hint= voorkomt.
+             * Ondersteuning voor losse teksten
+             * waarin login_hint= voorkomt.
              */
             if (
                 possibleUser.includes("login_hint=")
@@ -1337,7 +1438,7 @@
 
             if (!username) {
                 showStatus(
-                    "De QR-code bevat geen geldig S-nummer.",
+                    "QR-code niet herkend.",
                     "error"
                 );
 
@@ -1346,12 +1447,8 @@
 
             qrResultHandled = true;
 
-            inputElement.value = username;
-
-            showStatus(
-                "QR-code herkend. Teams wordt geopend.",
-                "success"
-            );
+            inputElement.value =
+                username.split("@")[0];
 
             await stopScan();
 
@@ -1359,7 +1456,7 @@
                 function () {
                     goToTeams(username);
                 },
-                200
+                150
             );
         }
 
@@ -1376,7 +1473,7 @@
                 typeof Html5Qrcode === "undefined"
             ) {
                 showStatus(
-                    "De QR-scanner kon niet worden geladen. Controleer de internetverbinding.",
+                    "De QR-scanner kon niet worden geladen.",
                     "error"
                 );
 
@@ -1388,7 +1485,7 @@
                 window.location.hostname !== "localhost"
             ) {
                 showStatus(
-                    "De camera werkt alleen wanneer de pagina via HTTPS wordt geopend.",
+                    "De camera werkt alleen via HTTPS.",
                     "error"
                 );
 
@@ -1396,11 +1493,6 @@
             }
 
             if (scannerIsRunning) {
-                showStatus(
-                    "De camera is al actief.",
-                    "success"
-                );
-
                 return;
             }
 
@@ -1408,10 +1500,6 @@
 
             scanner =
                 new Html5Qrcode("reader");
-
-            showStatus(
-                "Camera wordt gestart..."
-            );
 
             try {
                 await scanner.start(
@@ -1435,7 +1523,7 @@
 
                             const size =
                                 Math.floor(
-                                    smallestSide * 0.72
+                                    smallestSide * 0.70
                                 );
 
                             return {
@@ -1444,15 +1532,15 @@
                             };
                         },
 
-                        aspectRatio: 1
+                        aspectRatio: 1.4
                     },
                     async function (decodedText) {
                         await handleQR(decodedText);
                     },
                     function () {
                         /*
-                         * Geen foutmelding tonen zolang
-                         * er nog geen QR-code wordt herkend.
+                         * Geen melding nodig zolang
+                         * er geen QR-code wordt herkend.
                          */
                     }
                 );
@@ -1461,11 +1549,6 @@
 
                 scannerActionsElement.classList.add(
                     "visible"
-                );
-
-                showStatus(
-                    "Camera actief. Houd de QR-code goed in beeld.",
-                    "success"
                 );
             } catch (error) {
                 scanner = null;
@@ -1488,19 +1571,19 @@
                     errorText.includes("notallowed")
                 ) {
                     message =
-                        "Geen cameratoegang. Geef deze website toestemming om de camera te gebruiken.";
+                        "Geef deze website toegang tot de camera.";
                 } else if (
                     errorText.includes("notfound") ||
                     errorText.includes("devicesnotfound")
                 ) {
                     message =
-                        "Er werd geen bruikbare camera gevonden.";
+                        "Geen camera gevonden.";
                 } else if (
                     errorText.includes("notreadable") ||
                     errorText.includes("trackstart")
                 ) {
                     message =
-                        "De camera wordt mogelijk al door een andere toepassing gebruikt.";
+                        "De camera is mogelijk al in gebruik.";
                 }
 
                 showStatus(
@@ -1535,7 +1618,7 @@
                 await scanner.clear();
             } catch (error) {
                 console.warn(
-                    "De scanner kon niet volledig worden afgesloten:",
+                    "Scanner kon niet volledig worden afgesloten:",
                     error
                 );
             } finally {
@@ -1633,15 +1716,11 @@
             };
 
             if (!links[toolbox]) {
-                showStatus(
-                    "De link van deze toolbox werd niet gevonden.",
-                    "error"
-                );
-
                 return;
             }
 
-            window.location.href = links[toolbox];
+            window.location.href =
+                links[toolbox];
         }
 
         /* =====================================================

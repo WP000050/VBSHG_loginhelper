@@ -13,7 +13,7 @@
         content="#42a8a1"
     >
 
-    <title>Loginhelper Pip_Japi</title>
+    <title>Loginhelper Pip &amp; Japi</title>
 
     <!-- QR-codebibliotheek -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -884,7 +884,74 @@
                 transition: none !important;
             }
         }
-    </style>
+    
+        /* QR-scanner als modaal venster, gebaseerd op de werkende Booischot-versie */
+        .scanner-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.74);
+        }
+
+        .scanner-modal.open {
+            display: flex;
+        }
+
+        .scanner-panel {
+            width: min(540px, 96vw);
+            max-height: 96vh;
+            padding: 11px;
+            overflow: auto;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 14px 42px rgba(0, 0, 0, 0.35);
+        }
+
+        .scanner-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .scanner-header h2 {
+            margin: 0;
+            color: var(--turquoise-dark);
+            font-size: 20px;
+        }
+
+        .closebtn {
+            min-width: 92px;
+            padding: 9px 12px;
+            background: var(--turquoise-dark);
+        }
+
+        #reader {
+            width: 100%;
+            min-height: 310px;
+            margin: 0;
+            overflow: hidden;
+            background: #e9eef5;
+            border-radius: 11px;
+        }
+
+        #reader video {
+            width: 100% !important;
+            object-fit: cover !important;
+        }
+
+        .scan-status {
+            margin: 0 0 8px;
+            color: #4b5563;
+            text-align: center;
+            font-size: 14px;
+        }
+</style>
 </head>
 
 <body>
@@ -898,11 +965,7 @@
         <header class="topbar">
 
             <div class="logo-box">
-                <img
-                    id="schoolLogo"
-                    src="./pip_japi.png"
-                    alt="Pip en Japi"
-                >
+                <img id="schoolLogo" src="./pip_japi.png" alt="Pip en Japi">
             </div>
 
             <h1 class="page-title">
@@ -945,31 +1008,6 @@
                     </button>
 
                 </div>
-
-                <div
-                    id="scannerActions"
-                    class="scanner-actions"
-                >
-                    <button
-                        class="stop-button"
-                        type="button"
-                        onclick="stopScan()"
-                    >
-                        Camera stoppen
-                    </button>
-                </div>
-
-                <div
-                    id="reader"
-                    aria-label="QR-codescanner"
-                ></div>
-
-                <div
-                    id="status"
-                    class="status"
-                    role="status"
-                    aria-live="polite"
-                ></div>
 
             </div>
 
@@ -1153,626 +1191,236 @@
 
     </main>
 
+
+    <div id="scannerModal" class="scanner-modal" role="dialog" aria-modal="true" aria-labelledby="scannerTitle">
+        <div class="scanner-panel">
+            <div class="scanner-header">
+                <h2 id="scannerTitle">Scan de QR-code</h2>
+                <button class="button closebtn" type="button" onclick="closeScanner()">✕ Sluiten</button>
+            </div>
+            <p id="scanStatus" class="scan-status">Camera starten...</p>
+            <div id="reader"></div>
+        </div>
+    </div>
+
     <script>
         "use strict";
 
-        /* =====================================================
-           INSTELLINGEN
-           ===================================================== */
-
         const SCHOOL_DOMAIN = "leerling.vbshgoor.be";
-        const REQUIRED_DIGITS = 6;
-
         let scanner = null;
-        let scannerIsRunning = false;
-        let qrResultHandled = false;
+        let running = false;
+        let starting = false;
+        let resultHandled = false;
 
-        const inputElement =
-            document.getElementById("snummer");
-
-        const readerElement =
-            document.getElementById("reader");
-
-        const statusElement =
-            document.getElementById("status");
-
-        const scannerActionsElement =
-            document.getElementById("scannerActions");
-
-        const schoolLogoElement =
-            document.getElementById("schoolLogo");
-
-        /* =====================================================
-           LOGOCONTROLE
-           ===================================================== */
+        const inputElement = document.getElementById("snummer");
+        const scannerModal = document.getElementById("scannerModal");
+        const scanStatus = document.getElementById("scanStatus");
+        const schoolLogoElement = document.getElementById("schoolLogo");
 
         if (schoolLogoElement) {
-            schoolLogoElement.addEventListener(
-                "error",
-                function () {
-                    schoolLogoElement.style.display = "none";
-
-                    console.error(
-                        "Logo niet gevonden. Controleer of pip_japi.png in dezelfde map staat als index.html."
-                    );
-                }
-            );
+            schoolLogoElement.addEventListener("error", function () {
+                schoolLogoElement.style.display = "none";
+                console.error("Logo niet gevonden. Controleer of pip_japi.png naast index.html staat.");
+            });
         }
 
-        /* =====================================================
-           INVOERVELD
-           ===================================================== */
+        window.addEventListener("load", function () {
+            inputElement.focus();
+        });
 
-        inputElement.addEventListener(
-            "keydown",
-            function (event) {
-                if (event.key === "Enter") {
-                    event.preventDefault();
-                    openApp("teams");
-                }
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") closeScanner();
+            if (event.key === "Enter" && document.activeElement === inputElement) {
+                openApp("teams");
             }
-        );
+        });
 
-        inputElement.addEventListener(
-            "input",
-            function () {
-                this.value =
-                    this.value.replace(/\s+/g, "");
+        scannerModal.addEventListener("click", function (event) {
+            if (event.target === scannerModal) closeScanner();
+        });
 
-                hideStatus();
-            }
-        );
+        inputElement.addEventListener("input", function () {
+            this.value = this.value.replace(/\s+/g, "");
+        });
 
         function clearInput() {
             inputElement.value = "";
-
-            hideStatus();
-
             inputElement.focus();
         }
 
-        /* =====================================================
-           MELDINGEN
-           ===================================================== */
-
-        function showStatus(message, type = "") {
-            statusElement.textContent = message;
-
-            statusElement.className =
-                "status visible" +
-                (type ? " " + type : "");
+        function normalizeUser(value) {
+            let user = String(value || "").trim().replace(/\s/g, "").toLowerCase();
+            if (/^\d{6}$/.test(user)) user = "s" + user + "@" + SCHOOL_DOMAIN;
+            if (/^s\d{6}$/.test(user)) user += "@" + SCHOOL_DOMAIN;
+            if (/^\d{6}@leerling\.vbshgoor\.be$/.test(user)) user = "s" + user;
+            return user;
         }
 
-        function hideStatus() {
-            statusElement.textContent = "";
-            statusElement.className = "status";
-        }
-
-        /* =====================================================
-           S-NUMMER VERWERKEN
-           ===================================================== */
-
-        function cleanUserValue(value) {
-            return String(value || "")
-                .trim()
-                .replace(/\s+/g, "")
-                .toLowerCase();
-        }
-
-        function normalizeUsername(value) {
-            const user = cleanUserValue(value);
-
-            if (!user) {
-                return null;
-            }
-
-            const digitsOnlyPattern =
-                new RegExp(
-                    "^\\d{" + REQUIRED_DIGITS + "}$"
-                );
-
-            const sNumberPattern =
-                new RegExp(
-                    "^s\\d{" + REQUIRED_DIGITS + "}$"
-                );
-
-            const escapedDomain =
-                SCHOOL_DOMAIN.replace(/\./g, "\\.");
-
-            const fullAccountPattern =
-                new RegExp(
-                    "^s\\d{" +
-                    REQUIRED_DIGITS +
-                    "}@" +
-                    escapedDomain +
-                    "$"
-                );
-
-            /*
-             * Voorbeeld: 123456
-             */
-            if (digitsOnlyPattern.test(user)) {
-                return (
-                    "s" +
-                    user +
-                    "@" +
-                    SCHOOL_DOMAIN
-                );
-            }
-
-            /*
-             * Voorbeeld: s123456
-             */
-            if (sNumberPattern.test(user)) {
-                return (
-                    user +
-                    "@" +
-                    SCHOOL_DOMAIN
-                );
-            }
-
-            /*
-             * Voorbeeld:
-             * s123456@leerling.vbshgoor.be
-             */
-            if (fullAccountPattern.test(user)) {
-                return user;
-            }
-
-            return null;
+        function isValidUser(user) {
+            return /^s\d{6}@leerling\.vbshgoor\.be$/.test(user);
         }
 
         function getUserFromInput() {
-            hideStatus();
-
-            const originalValue =
-                inputElement.value;
-
-            if (!cleanUserValue(originalValue)) {
-                showStatus(
-                    "Vul eerst een S-nummer in.",
-                    "error"
-                );
-
+            if (!inputElement.value.trim()) {
+                alert("Typ een S-nummer of scan een QR-code.");
                 inputElement.focus();
-
                 return null;
             }
 
-            const username =
-                normalizeUsername(originalValue);
-
-            if (!username) {
-                showStatus(
-                    "Ongeldig S-nummer.",
-                    "error"
-                );
-
+            const user = normalizeUser(inputElement.value);
+            if (!isValidUser(user)) {
+                alert("Ongeldig S-nummer. Gebruik 6 cijfers, eventueel voorafgegaan door s.");
                 inputElement.focus();
                 inputElement.select();
-
                 return null;
             }
 
-            /*
-             * Het invoerveld blijft compact.
-             * Alleen het S-nummer wordt getoond,
-             * niet het volledige e-mailadres.
-             */
-            const shortNumber =
-                username.split("@")[0];
-
-            inputElement.value = shortNumber;
-
-            return username;
+            inputElement.value = user.split("@")[0];
+            return user;
         }
 
-        /* =====================================================
-           QR-CODE VERWERKEN
-           ===================================================== */
+        function handleQR(data) {
+            const raw = String(data || "").trim();
+            let user = raw;
 
-        function extractUserFromQR(data) {
-            const raw =
-                String(data || "").trim();
-
-            if (!raw) {
-                return null;
-            }
-
-            let possibleUser = raw;
-
-            /*
-             * Login_hint uit een URL halen.
-             */
-            try {
-                const scannedUrl =
-                    new URL(raw);
-
-                const loginHint =
-                    scannedUrl.searchParams.get(
-                        "login_hint"
-                    );
-
-                if (loginHint) {
-                    possibleUser = loginHint;
-                }
-            } catch (error) {
-                /*
-                 * Geen URL.
-                 * Behandel de inhoud als gewone tekst.
-                 */
-            }
-
-            /*
-             * Ondersteuning voor losse teksten
-             * waarin login_hint= voorkomt.
-             */
-            if (
-                possibleUser.includes("login_hint=")
-            ) {
-                const match =
-                    possibleUser.match(
-                        /login_hint=([^&\s]+)/i
-                    );
-
-                if (match && match[1]) {
-                    try {
-                        possibleUser =
-                            decodeURIComponent(
-                                match[1]
-                            );
-                    } catch (error) {
-                        possibleUser = match[1];
-                    }
+            if (raw.toLowerCase().includes("login_hint=")) {
+                try {
+                    user = new URL(raw).searchParams.get("login_hint") || "";
+                } catch (error) {
+                    const match = raw.match(/[?&]login_hint=([^&]+)/i);
+                    user = match ? decodeURIComponent(match[1]) : "";
                 }
             }
 
-            return normalizeUsername(possibleUser);
-        }
+            user = normalizeUser(user);
+            inputElement.value = user.split("@")[0] || user;
 
-        async function handleQR(decodedText) {
-            if (qrResultHandled) {
+            if (!isValidUser(user)) {
+                alert("QR-code niet herkend.");
+                inputElement.focus();
+                inputElement.select();
                 return;
             }
 
-            const username =
-                extractUserFromQR(decodedText);
-
-            if (!username) {
-                showStatus(
-                    "QR-code niet herkend.",
-                    "error"
-                );
-
-                return;
-            }
-
-            qrResultHandled = true;
-
-            inputElement.value =
-                username.split("@")[0];
-
-            await stopScan();
-
-            window.setTimeout(
-                function () {
-                    goToTeams(username);
-                },
-                150
-            );
+            goToTeams(user);
         }
-
-        /* =====================================================
-           QR-CODESCANNER
-           ===================================================== */
 
         async function startScan() {
-            hideStatus();
+            if (starting || running) return;
 
-            qrResultHandled = false;
-
-            if (
-                typeof Html5Qrcode === "undefined"
-            ) {
-                showStatus(
-                    "De QR-scanner kon niet worden geladen.",
-                    "error"
-                );
-
+            if (typeof Html5Qrcode === "undefined") {
+                alert("De QR-scanner kon niet worden geladen.");
                 return;
             }
 
-            if (
-                !window.isSecureContext &&
-                window.location.hostname !== "localhost"
-            ) {
-                showStatus(
-                    "De camera werkt alleen via HTTPS.",
-                    "error"
-                );
-
+            if (!window.isSecureContext && window.location.hostname !== "localhost") {
+                alert("De camera werkt alleen via HTTPS.");
                 return;
             }
 
-            if (scannerIsRunning) {
-                return;
-            }
-
-            readerElement.innerHTML = "";
-
-            if (scanner) {
-                try {
-                    await stopScan();
-                } catch (error) {
-                    console.warn("Vorige scanner kon niet worden afgesloten:", error);
-                }
-            }
-
-            scanner = new Html5Qrcode("reader");
+            scannerModal.classList.add("open");
+            document.body.style.overflow = "hidden";
+            scanStatus.textContent = "Camera starten...";
+            starting = true;
+            resultHandled = false;
 
             try {
-                let cameraConfig = {
-                    facingMode: "environment"
-                };
+                scanner = new Html5Qrcode("reader");
+                const cameras = await Html5Qrcode.getCameras();
+                if (!cameras || !cameras.length) throw new Error("Geen camera gevonden");
 
-                try {
-                    const cameras = await Html5Qrcode.getCameras();
-
-                    if (cameras && cameras.length > 0) {
-                        const backCamera = cameras.find(function (camera) {
-                            return /back|rear|environment|achter/i.test(camera.label || "");
-                        });
-
-                        cameraConfig = backCamera
-                            ? backCamera.id
-                            : cameras[cameras.length - 1].id;
-                    }
-                } catch (cameraListError) {
-                    console.warn(
-                        "Cameralijst niet beschikbaar. Standaardcamera wordt gebruikt:",
-                        cameraListError
-                    );
-                }
+                const camera = cameras.find(function (item) {
+                    return /back|rear|environment|achter/i.test(item.label || "");
+                }) || cameras[0];
 
                 await scanner.start(
-                    cameraConfig,
+                    camera.id,
                     {
                         fps: 10,
-
-                        qrbox: function (
-                            viewfinderWidth,
-                            viewfinderHeight
-                        ) {
-                            const smallestSide =
-                                Math.min(
-                                    viewfinderWidth,
-                                    viewfinderHeight
-                                );
-
-                            const size =
-                                Math.floor(
-                                    smallestSide * 0.70
-                                );
-
-                            return {
-                                width: size,
-                                height: size
-                            };
-                        },
-
-                        aspectRatio: 1.4
+                        qrbox: function (width, height) {
+                            const size = Math.floor(Math.min(width, height) * 0.72);
+                            return { width: size, height: size };
+                        }
                     },
                     async function (decodedText) {
-                        await handleQR(decodedText);
+                        if (resultHandled) return;
+                        resultHandled = true;
+                        await closeScanner();
+                        handleQR(decodedText);
                     },
-                    function () {
-                        /*
-                         * Geen melding nodig zolang
-                         * er geen QR-code wordt herkend.
-                         */
-                    }
+                    function () {}
                 );
 
-                scannerIsRunning = true;
-
-                scannerActionsElement.classList.add(
-                    "visible"
-                );
+                running = true;
+                scanStatus.textContent = "Houd de QR-code binnen het kader.";
             } catch (error) {
-                scanner = null;
-                scannerIsRunning = false;
-
-                readerElement.innerHTML = "";
-
-                scannerActionsElement.classList.remove(
-                    "visible"
-                );
-
-                const errorText =
-                    String(error || "").toLowerCase();
-
-                let message =
-                    "De camera kon niet worden gestart.";
-
-                if (
-                    errorText.includes("permission") ||
-                    errorText.includes("notallowed")
-                ) {
-                    message =
-                        "Geef deze website toegang tot de camera.";
-                } else if (
-                    errorText.includes("notfound") ||
-                    errorText.includes("devicesnotfound")
-                ) {
-                    message =
-                        "Geen camera gevonden.";
-                } else if (
-                    errorText.includes("notreadable") ||
-                    errorText.includes("trackstart")
-                ) {
-                    message =
-                        "De camera is mogelijk al in gebruik.";
-                }
-
-                showStatus(
-                    message,
-                    "error"
-                );
-
-                console.error(
-                    "Camera kon niet starten:",
-                    error
-                );
-            }
-        }
-
-        async function stopScan() {
-            if (!scanner) {
-                readerElement.innerHTML = "";
-                scannerIsRunning = false;
-
-                scannerActionsElement.classList.remove(
-                    "visible"
-                );
-
-                return;
-            }
-
-            try {
-                if (scannerIsRunning) {
-                    await scanner.stop();
-                }
-
-                await scanner.clear();
-            } catch (error) {
-                console.warn(
-                    "Scanner kon niet volledig worden afgesloten:",
-                    error
-                );
+                console.error("Camera kon niet starten:", error);
+                await resetScanner();
+                alert("De camera kon niet worden gestart. Controleer de cameratoestemming in Chrome en sluit andere apps die de camera gebruiken.");
             } finally {
-                scanner = null;
-                scannerIsRunning = false;
-
-                readerElement.innerHTML = "";
-
-                scannerActionsElement.classList.remove(
-                    "visible"
-                );
+                starting = false;
             }
         }
 
-        /* =====================================================
-           MICROSOFT 365
-           ===================================================== */
+        async function resetScanner() {
+            if (scanner && running) {
+                try { await scanner.stop(); } catch (error) {}
+            }
+            if (scanner) {
+                try { await scanner.clear(); } catch (error) {}
+            }
+            scanner = null;
+            running = false;
+            starting = false;
+            scannerModal.classList.remove("open");
+            document.body.style.overflow = "";
+        }
 
-        function goToTeams(username) {
-            const url =
-                "https://teams.microsoft.com/?login_hint=" +
-                encodeURIComponent(username);
+        async function closeScanner() {
+            await resetScanner();
+            inputElement.focus();
+        }
 
-            window.location.href = url;
+        function goToTeams(user) {
+            location.href = "https://teams.microsoft.com/?login_hint=" + encodeURIComponent(user);
         }
 
         function openApp(app) {
-            const username =
-                getUserFromInput();
+            const user = getUserFromInput();
+            if (!user) return;
 
-            if (!username) {
-                return;
-            }
-
+            const encodedUser = encodeURIComponent(user);
             const links = {
-                teams:
-                    "https://teams.microsoft.com/?login_hint=",
-
-                word:
-                    "https://www.office.com/launch/word?auth=2&login_hint=",
-
-                powerpoint:
-                    "https://www.office.com/launch/powerpoint?auth=2&login_hint=",
-
-                onedrive:
-                    "https://www.office.com/launch/onedrive?auth=2&login_hint=",
-
-                outlook:
-                    "https://outlook.office.com/mail/?login_hint="
+                teams: "https://teams.microsoft.com/?login_hint=" + encodedUser,
+                word: "https://www.office.com/launch/word?auth=2&login_hint=" + encodedUser,
+                powerpoint: "https://www.office.com/launch/powerpoint?auth=2&login_hint=" + encodedUser,
+                onedrive: "https://www.office.com/launch/onedrive?auth=2&login_hint=" + encodedUser,
+                outlook: "https://outlook.office.com/mail/?login_hint=" + encodedUser
             };
 
-            if (!links[app]) {
-                showStatus(
-                    "Deze toepassing is niet beschikbaar.",
-                    "error"
-                );
-
-                return;
-            }
-
-            window.location.href =
-                links[app] +
-                encodeURIComponent(username);
+            if (links[app]) location.href = links[app];
         }
 
-        /* =====================================================
-           TOOLBOXEN
-           ===================================================== */
+        const toolboxLinks = {
+            l1: "https://www.canva.com/design/DAFUpBzBHGs/6wyDjMD8Qlq2vjbS9nKoog/view",
+            l2: "https://www.canva.com/design/DAFT_E7BGO8/g5t-f42RS_2QKPxb2QthBw/view",
+            l3: "https://www.canva.com/design/DAFULuLHwxo/D3B5GonSVhfqEqwaaD6mbw/view",
+            l4: "https://www.canva.com/design/DAGT1qUzh9s/b2FFy77S4U4Irmc41WYAeg/view",
+            l5: "https://www.canva.com/design/DAGT6iZW5Mw/K9Ui3yxsx0uSSehxgq2olg/view",
+            l6: "https://www.canva.com/design/DAFT_YiSTuo/B0CORzvLFmvSUMRDyGrfLA/view",
+            k2: "https://canva.link/c2soquwfe8ut",
+            k3: "https://canva.link/lekkdwo40lv1h7q"
+        };
 
-        function openToolbox(toolbox) {
-            const links = {
-                l1:
-                    "https://www.canva.com/design/DAFUpBzBHGs/6wyDjMD8Qlq2vjbS9nKoog/view",
-
-                l2:
-                    "https://www.canva.com/design/DAFT_E7BGO8/g5t-f42RS_2QKPxb2QthBw/view",
-
-                l3:
-                    "https://www.canva.com/design/DAFULuLHwxo/D3B5GonSVhfqEqwaaD6mbw/view",
-
-                l4:
-                    "https://www.canva.com/design/DAGT1qUzh9s/b2FFy77S4U4Irmc41WYAeg/view",
-
-                l5:
-                    "https://www.canva.com/design/DAGT6iZW5Mw/K9Ui3yxsx0uSSehxgq2olg/view",
-
-                l6:
-                    "https://www.canva.com/design/DAFT_YiSTuo/B0CORzvLFmvSUMRDyGrfLA/view",
-
-                k2:
-                    "https://canva.link/c2soquwfe8ut",
-
-                k3:
-                    "https://canva.link/lekkdwo40lv1h7q"
-            };
-
-            if (!links[toolbox]) {
-                return;
-            }
-
-            window.location.href =
-                links[toolbox];
+        function openToolbox(key) {
+            if (toolboxLinks[key]) location.href = toolboxLinks[key];
         }
 
-        /* =====================================================
-           CAMERA STOPPEN BIJ VERLATEN PAGINA
-           ===================================================== */
-
-        window.addEventListener(
-            "pagehide",
-            function () {
-                if (
-                    scanner &&
-                    scannerIsRunning
-                ) {
-                    scanner
-                        .stop()
-                        .catch(function () {
-                            /*
-                             * Geen verdere actie nodig.
-                             */
-                        });
-                }
-            }
-        );
+        window.addEventListener("pagehide", function () {
+            if (scanner) resetScanner();
+        });
     </script>
+
 
 </body>
 </html>

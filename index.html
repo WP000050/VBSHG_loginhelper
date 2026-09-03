@@ -13,7 +13,7 @@
         content="#42a8a1"
     >
 
-    <title>Loginhelper Pip &amp; Japi</title>
+    <title>Loginhelper Pip_Japi</title>
 
     <!-- QR-codebibliotheek -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -898,7 +898,11 @@
         <header class="topbar">
 
             <div class="logo-box">
-                ./pip&amp;japi.png
+                <img
+                    id="schoolLogo"
+                    src="./pip_japi.png"
+                    alt="Pip en Japi"
+                >
             </div>
 
             <h1 class="page-title">
@@ -1182,20 +1186,18 @@
            LOGOCONTROLE
            ===================================================== */
 
-        schoolLogoElement.addEventListener(
-            "error",
-            function () {
-                /*
-                 * Geen fouttekst op de pagina tonen.
-                 * Alleen een melding in de browserconsole.
-                 */
-                schoolLogoElement.style.display = "none";
+        if (schoolLogoElement) {
+            schoolLogoElement.addEventListener(
+                "error",
+                function () {
+                    schoolLogoElement.style.display = "none";
 
-                console.error(
-                    "Logo niet gevonden. Controleer of pip&japi.png in dezelfde map staat als index.html."
-                );
-            }
-        );
+                    console.error(
+                        "Logo niet gevonden. Controleer of pip_japi.png in dezelfde map staat als index.html."
+                    );
+                }
+            );
+        }
 
         /* =====================================================
            INVOERVELD
@@ -1498,16 +1500,42 @@
 
             readerElement.innerHTML = "";
 
-            scanner =
-                new Html5Qrcode("reader");
+            if (scanner) {
+                try {
+                    await stopScan();
+                } catch (error) {
+                    console.warn("Vorige scanner kon niet worden afgesloten:", error);
+                }
+            }
+
+            scanner = new Html5Qrcode("reader");
 
             try {
+                let cameraConfig = {
+                    facingMode: "environment"
+                };
+
+                try {
+                    const cameras = await Html5Qrcode.getCameras();
+
+                    if (cameras && cameras.length > 0) {
+                        const backCamera = cameras.find(function (camera) {
+                            return /back|rear|environment|achter/i.test(camera.label || "");
+                        });
+
+                        cameraConfig = backCamera
+                            ? backCamera.id
+                            : cameras[cameras.length - 1].id;
+                    }
+                } catch (cameraListError) {
+                    console.warn(
+                        "Cameralijst niet beschikbaar. Standaardcamera wordt gebruikt:",
+                        cameraListError
+                    );
+                }
+
                 await scanner.start(
-                    {
-                        facingMode: {
-                            ideal: "environment"
-                        }
-                    },
+                    cameraConfig,
                     {
                         fps: 10,
 

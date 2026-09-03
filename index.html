@@ -1,301 +1,2014 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Loginhelper</title>
+    <meta charset="UTF-8">
 
-<script src="https://unpkg.com/html5-qrcode"></script>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<style>
-body {
-    font-family: Segoe UI, Arial;
-    background: #d8e3f0;
-    margin: 0;
-    padding: 20px;
-}
+    <meta
+        name="theme-color"
+        content="#45a6a6"
+    >
 
-.container {
-    max-width: 1100px;
-    margin: auto;
-    background: #f5f7fa;
-    border-radius: 16px;
-    padding: 20px;
-}
+    <title>Loginhelper Pip & Japi</title>
 
-/* ✅ CAMERA bovenaan */
-.camera-blok {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-    text-align: center;
-}
+    <!-- QR-codebibliotheek -->
+    https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.jsscript>
 
-.camera-blok .inputblok {
-    width: 420px;
-    max-width: 100%;
-}
+    <style>
+        :root {
+            /*
+             * Deze kleuren worden automatisch aangepast
+             * aan de kleuren uit pip&japi.png.
+             */
+            --primary: #45a6a6;
+            --primary-dark: #287879;
+            --secondary: #f2a93b;
+            --accent: #e96868;
+            --accent-two: #6c74c9;
 
-/* ✅ GRID onderaan */
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-}
+            --background: #edf8f7;
+            --surface: #ffffff;
+            --surface-soft: #f4fbfa;
+            --text: #243536;
+            --muted: #637777;
+            --border: #acd9d5;
 
-.inputblok {
-    background: #eef4fb;
-    padding: 12px;
-    border-radius: 12px;
-    border: 2px solid #84a646;
-}
+            --shadow:
+                0 14px 35px rgba(36, 53, 54, 0.14);
+        }
 
-input {
-    width: 100%;
-    padding: 14px;
-    font-size: 18px;
-    border-radius: 10px;
-    border: 2px solid #84a646;
-    box-sizing: border-box;
-}
+        * {
+            box-sizing: border-box;
+        }
 
-/* knoppen */
-.button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 8px;
-    border-radius: 10px;
-    border: none;
-    font-size: 15px;
-    color: white;
-    cursor: pointer;
-}
+        html {
+            min-height: 100%;
+        }
 
-.teams { background:#6264A7; }
-.word { background:#2B579A; }
-.ppt { background:#D24726; }
-.onedrive { background:#0078D4; }
-.outlook { background:#0072C6; }
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
 
-.l1 { background:#4CAF50; }
-.l2 { background:#8BC34A; }
-.l3 { background:#FFC107; }
-.l4 { background:#FF7043; }
-.l5 { background:#9C27B0; }
-.l6 { background:#3F51B5; }
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
 
-.k2 { background:#FF9800; }
-.k3 { background:#E91E63; }
+            color: var(--text);
 
-.button:hover {
-    opacity: 0.85;
-}
+            background:
+                radial-gradient(
+                    circle at top left,
+                    color-mix(in srgb, var(--secondary) 25%, transparent),
+                    transparent 38%
+                ),
+                radial-gradient(
+                    circle at bottom right,
+                    color-mix(in srgb, var(--primary) 28%, transparent),
+                    transparent 40%
+                ),
+                var(--background);
+        }
 
-#reader {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-}
+        button,
+        input {
+            font: inherit;
+        }
 
-#reader video {
-    border-radius: 12px;
-    border: 3px solid #84a646;
-}
+        button {
+            -webkit-tap-highlight-color: transparent;
+        }
 
-/* toolbox */
-.toolbox-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-}
+        .container {
+            width: min(1100px, 100%);
+            margin: 0 auto;
+            padding: 22px;
 
-/* mobiel */
-@media (max-width: 900px) {
-    .grid {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.98),
+                    rgba(255, 255, 255, 0.91)
+                );
+
+            border:
+                3px solid
+                color-mix(
+                    in srgb,
+                    var(--primary) 42%,
+                    white
+                );
+
+            border-radius: 26px;
+            box-shadow: var(--shadow);
+        }
+
+        /* ===== HOOFDING ===== */
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 128px;
+            min-width: 128px;
+            height: 104px;
+
+            padding: 6px;
+
+            background: white;
+            border-radius: 22px;
+
+            box-shadow:
+                0 7px 20px
+                color-mix(
+                    in srgb,
+                    var(--primary) 18%,
+                    transparent
+                );
+        }
+
+        #school-logo {
+            display: block;
+
+            width: 100%;
+            height: 100%;
+
+            object-fit: contain;
+        }
+
+        .header-text h1 {
+            margin: 0;
+
+            color: var(--primary-dark);
+            font-size: clamp(30px, 5vw, 46px);
+            line-height: 1;
+        }
+
+        .header-text p {
+            margin: 8px 0 0;
+
+            color: var(--muted);
+            font-size: 17px;
+        }
+
+        /* ===== LOGINBLOK ===== */
+
+        .camera-blok {
+            display: flex;
+            justify-content: center;
+
+            margin-bottom: 21px;
+            text-align: center;
+        }
+
+        .camera-blok .inputblok {
+            width: 490px;
+            max-width: 100%;
+        }
+
+        .inputblok {
+            padding: 16px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    var(--surface-soft),
+                    white
+                );
+
+            border:
+                3px solid
+                color-mix(
+                    in srgb,
+                    var(--primary) 68%,
+                    white
+                );
+
+            border-radius: 18px;
+        }
+
+        .input-label {
+            display: block;
+
+            margin: 0 0 8px;
+
+            color: var(--primary-dark);
+            font-size: 16px;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        input {
+            width: 100%;
+            min-width: 0;
+
+            padding: 14px 16px;
+
+            color: var(--text);
+            font-size: 19px;
+            font-weight: 600;
+
+            background: white;
+
+            border:
+                2px solid
+                color-mix(
+                    in srgb,
+                    var(--primary) 65%,
+                    white
+                );
+
+            border-radius: 12px;
+            outline: none;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+
+            box-shadow:
+                0 0 0 4px
+                color-mix(
+                    in srgb,
+                    var(--primary) 22%,
+                    transparent
+                );
+        }
+
+        input::placeholder {
+            color: #8c9b9b;
+            font-weight: 400;
+        }
+
+        .clear-button {
+            flex: 0 0 52px;
+
+            border: none;
+            border-radius: 12px;
+
+            color: white;
+            background: var(--accent);
+
+            font-size: 23px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .clear-button:hover {
+            filter: brightness(0.94);
+        }
+
+        .input-help {
+            margin: 8px 0 0;
+
+            color: var(--muted);
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .scan-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--primary-dark)
+                );
+        }
+
+        .status {
+            display: none;
+
+            margin-top: 10px;
+            padding: 10px 12px;
+
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 600;
+            text-align: left;
+
+            background:
+                color-mix(
+                    in srgb,
+                    var(--secondary) 18%,
+                    white
+                );
+
+            border:
+                2px solid
+                color-mix(
+                    in srgb,
+                    var(--secondary) 55%,
+                    white
+                );
+
+            border-radius: 10px;
+        }
+
+        .status.visible {
+            display: block;
+        }
+
+        .status.error {
+            color: #7a2222;
+
+            background:
+                color-mix(
+                    in srgb,
+                    var(--accent) 17%,
+                    white
+                );
+
+            border-color:
+                color-mix(
+                    in srgb,
+                    var(--accent) 52%,
+                    white
+                );
+        }
+
+        .status.success {
+            color: #185c42;
+
+            background: #e5f8ef;
+            border-color: #80c9aa;
+        }
+
+        /* ===== TWEE KOLOMMEN ===== */
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            padding: 17px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.96),
+                    color-mix(
+                        in srgb,
+                        var(--primary) 7%,
+                        white
+                    )
+                );
+
+            border:
+                2px solid
+                color-mix(
+                    in srgb,
+                    var(--primary) 29%,
+                    white
+                );
+
+            border-radius: 18px;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            margin: 0 0 13px;
+
+            color: var(--primary-dark);
+            font-size: 23px;
+        }
+
+        .panel-title-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 38px;
+            height: 38px;
+
+            color: white;
+            background: var(--primary);
+
+            border-radius: 12px;
+        }
+
+        /* ===== ALGEMENE KNOPPEN ===== */
+
+        .button {
+            width: 100%;
+            min-height: 48px;
+
+            margin-top: 8px;
+            padding: 12px 14px;
+
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+
+            border: none;
+            border-radius: 12px;
+
+            box-shadow:
+                0 5px 11px
+                rgba(0, 0, 0, 0.11);
+
+            cursor: pointer;
+
+            transition:
+                transform 0.18s ease,
+                filter 0.18s ease,
+                box-shadow 0.18s ease;
+        }
+
+        .button:hover {
+            filter: brightness(1.06);
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 15px
+                rgba(0, 0, 0, 0.15);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button:focus-visible,
+        .shape-button:focus-visible,
+        .clear-button:focus-visible {
+            outline: 4px solid
+                color-mix(
+                    in srgb,
+                    var(--secondary) 60%,
+                    white
+                );
+
+            outline-offset: 3px;
+        }
+
+        /* ===== OFFICE ===== */
+
+        .office-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 9px;
+        }
+
+        .office-grid .button {
+            margin: 0;
+        }
+
+        .teams {
+            background: #6264a7;
+        }
+
+        .word {
+            background: #2b579a;
+        }
+
+        .ppt {
+            background: #d24726;
+        }
+
+        .onedrive {
+            background: #0078d4;
+        }
+
+        .outlook {
+            grid-column: 1 / -1;
+            background: #0072c6;
+        }
+
+        /* ===== TOOLBOX LAGER ===== */
+
+        .toolbox-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 9px;
+        }
+
+        .toolbox-grid .button {
+            margin: 0;
+        }
+
+        .l1 {
+            background: var(--primary);
+        }
+
+        .l2 {
+            background: var(--secondary);
+        }
+
+        .l3 {
+            background: var(--accent);
+        }
+
+        .l4 {
+            background: var(--accent-two);
+        }
+
+        .l5 {
+            background:
+                color-mix(
+                    in srgb,
+                    var(--primary) 55%,
+                    var(--accent)
+                );
+        }
+
+        .l6 {
+            background:
+                color-mix(
+                    in srgb,
+                    var(--secondary) 52%,
+                    var(--accent)
+                );
+        }
+
+        /* ===== KLEUTERKNOPPEN ===== */
+
+        .kleuter-title {
+            margin: 18px 0 10px;
+
+            color: var(--primary-dark);
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .kleuter-tools {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+
+            min-height: 170px;
+        }
+
+        .shape-button {
+            position: relative;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+
+            width: 132px;
+            height: 132px;
+            padding: 12px;
+
+            color: white;
+            border: none;
+
+            filter:
+                drop-shadow(
+                    0 8px 7px
+                    rgba(0, 0, 0, 0.18)
+                );
+
+            cursor: pointer;
+
+            transition:
+                transform 0.18s ease,
+                filter 0.18s ease;
+        }
+
+        .shape-button:hover {
+            transform: scale(1.07) rotate(-2deg);
+
+            filter:
+                brightness(1.05)
+                drop-shadow(
+                    0 11px 8px
+                    rgba(0, 0, 0, 0.2)
+                );
+        }
+
+        .shape-icon {
+            font-size: 36px;
+            line-height: 1;
+        }
+
+        .shape-label {
+            margin-top: 4px;
+
+            font-size: 18px;
+            font-weight: 900;
+
+            text-shadow:
+                1px 1px 2px
+                rgba(0, 0, 0, 0.25);
+        }
+
+        /* Stervorm voor K2 */
+        .star-button {
+            background:
+                linear-gradient(
+                    145deg,
+                    var(--secondary),
+                    color-mix(
+                        in srgb,
+                        var(--secondary) 50%,
+                        var(--accent)
+                    )
+                );
+
+            clip-path: polygon(
+                50% 0%,
+                61% 34%,
+                98% 35%,
+                68% 56%,
+                79% 92%,
+                50% 70%,
+                21% 92%,
+                32% 56%,
+                2% 35%,
+                39% 34%
+            );
+        }
+
+        /*
+         * Visvorm voor K3.
+         * De linkerzijde vormt de staart.
+         * De rechterzijde vormt de kop.
+         */
+        .fish-button {
+            width: 158px;
+            height: 112px;
+
+            padding-left: 39px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--accent-two)
+                );
+
+            clip-path: polygon(
+                0% 8%,
+                28% 30%,
+                44% 14%,
+                68% 8%,
+                89% 20%,
+                100% 50%,
+                89% 80%,
+                68% 92%,
+                44% 86%,
+                28% 70%,
+                0% 92%,
+                12% 50%
+            );
+        }
+
+        .fish-eye {
+            position: absolute;
+            top: 33px;
+            right: 27px;
+
+            width: 13px;
+            height: 13px;
+
+            background: white;
+            border: 4px solid var(--text);
+            border-radius: 50%;
+        }
+
+        /* ===== QR-LEZER ===== */
+
+        #reader {
+            width: 100%;
+            max-width: 380px;
+
+            margin: 12px auto 0;
+
+            overflow: hidden;
+
+            background: white;
+            border-radius: 14px;
+        }
+
+        #reader:empty {
+            display: none;
+        }
+
+        #reader video {
+            max-width: 100%;
+
+            border:
+                3px solid
+                var(--primary);
+
+            border-radius: 12px;
+        }
+
+        #reader img {
+            max-width: 100%;
+        }
+
+        #reader button {
+            padding: 9px 12px;
+
+            color: white;
+            background: var(--primary);
+
+            border: none;
+            border-radius: 8px;
+
+            cursor: pointer;
+        }
+
+        .scanner-actions {
+            display: none;
+
+            margin-top: 8px;
+        }
+
+        .scanner-actions.visible {
+            display: block;
+        }
+
+        .stop-button {
+            background: var(--accent);
+        }
+
+        /* ===== MOBIEL ===== */
+
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 14px;
+                border-radius: 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 8px;
+
+                text-align: center;
+            }
+
+            .logo-wrapper {
+                width: 116px;
+                min-width: 116px;
+                height: 92px;
+            }
+
+            .header-text p {
+                font-size: 15px;
+            }
+
+            .office-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .outlook {
+                grid-column: auto;
+            }
+
+            .toolbox-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .kleuter-tools {
+                gap: 12px;
+            }
+
+            .shape-button {
+                width: 116px;
+                height: 116px;
+            }
+
+            .fish-button {
+                width: 142px;
+                height: 102px;
+            }
+        }
+
+        @media (max-width: 390px) {
+            .kleuter-tools {
+                flex-direction: column;
+            }
+
+            .toolbox-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Minder beweging indien ingesteld op het toestel */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
+    <main class="container">
 
-<h1>Loginhelper</h1>
+        <!-- ===== LOGO EN TITEL ===== -->
+        <header class="header">
 
-<!-- ✅ CAMERA BLOK -->
-<div class="camera-blok">
-    <div class="inputblok">
+            <div class="logo-wrapper">
+                pip&japi.png                    onerror="handleLogoError(this)"
+                >
+            </div>
 
-        <input id="snummer" placeholder="Typ S-nummer of scan QR">
+            <div class="header-text">
+                <h1>Loginhelper</h1>
+                <p>
+                    Vul je S-nummer in en kies waar je naartoe wilt.
+                </p>
+            </div>
 
-        <button class="button" style="background:#8eb458;" onclick="startScan()">
-            📷 Scan QR-code
-        </button>
+        </header>
 
-        <div id="reader"></div>
+        <!-- ===== INVOER EN CAMERA ===== -->
+        <section class="camera-blok">
 
-    </div>
-</div>
+            <div class="inputblok">
 
-<!-- ✅ GRID -->
-<div class="grid">
+                <label
+                    class="input-label"
+                    for="snummer"
+                >
+                    Mijn S-nummer
+                </label>
 
-<!-- ✅ OFFICE -->
-<div>
-<h2>Office</h2>
+                <div class="input-row">
 
-<button class="button teams" onclick="openApp('teams')">Teams</button>
-<button class="button word" onclick="openApp('word')">Word</button>
-<button class="button ppt" onclick="openApp('ppt')">PowerPoint</button>
-<button class="button onedrive" onclick="openApp('onedrive')">OneDrive</button>
-<button class="button outlook" onclick="openApp('outlook')">Outlook</button>
-</div>
+                    <input
+                        id="snummer"
+                        type="text"
+                        inputmode="text"
+                        autocomplete="username"
+                        autocapitalize="none"
+                        spellcheck="false"
+                        placeholder="Bijvoorbeeld s123456 of 123456"
+                        maxlength="60"
+                        aria-describedby="input-help"
+                    >
 
-<!-- ✅ TOOLBOX -->
-<div>
-<h2>Toolboxen</h2>
+                    <button
+                        class="clear-button"
+                        type="button"
+                        onclick="clearInput()"
+                        aria-label="S-nummer wissen"
+                        title="S-nummer wissen"
+                    >
+                        ×
+                    </button>
 
-<div class="toolbox-grid">
-<button class="button l1" onclick="openToolbox('l1')">L1</button>
-<button class="button l2" onclick="openToolbox('l2')">L2</button>
-<button class="button l3" onclick="openToolbox('l3')">L3</button>
-<button class="button l4" onclick="openToolbox('l4')">L4</button>
-<button class="button l5" onclick="openToolbox('l5')">L5</button>
-<button class="button l6" onclick="openToolbox('l6')">L6</button>
+                </div>
 
-<button class="button k2" onclick="openToolbox('k2')">K2</button>
-<button class="button k3" onclick="openToolbox('k3')">K3</button>
-</div>
+                <p
+                    id="input-help"
+                    class="input-help"
+                >
+                    Je mag het nummer met of zonder de letter S invullen.
+                </p>
 
-</div>
+                <button
+                    class="button scan-button"
+                    type="button"
+                    onclick="startScan()"
+                >
+                    <span aria-hidden="true">📷</span>
+                    <span>Scan QR-code</span>
+                </button>
 
-</div>
-</div>
+                <div
+                    id="scannerActions"
+                    class="scanner-actions"
+                >
+                    <button
+                        class="button stop-button"
+                        type="button"
+                        onclick="stopScan()"
+                    >
+                        Camera stoppen
+                    </button>
+                </div>
 
-<script>
+                <div
+                    id="reader"
+                    aria-label="QR-codescanner"
+                ></div>
 
-let scanner = null;
+                <div
+                    id="status"
+                    class="status"
+                    role="status"
+                    aria-live="polite"
+                ></div>
 
-/* ===== SCAN ===== */
-function startScan() {
+            </div>
 
-    const reader = document.getElementById("reader");
-    reader.innerHTML = "📷 Camera starten...";
+        </section>
 
-    if (scanner) {
-        scanner.stop().catch(()=>{});
-    }
+        <!-- ===== OFFICE EN TOOLBOXEN ===== -->
+        <div class="grid">
 
-    scanner = new Html5Qrcode("reader");
+            <!-- OFFICE -->
+            <section class="panel">
 
-    scanner.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 220 },
-        (decodedText) => {
+                <h2 class="panel-title">
+                    <span
+                        class="panel-title-icon"
+                        aria-hidden="true"
+                    >
+                        M
+                    </span>
 
-            scanner.stop().then(() => reader.innerHTML = "");
+                    Microsoft 365
+                </h2>
 
-            handleQR(decodedText);
+                <div class="office-grid">
+
+                    <button
+                        class="button teams"
+                        type="button"
+                        onclick="openApp('teams')"
+                    >
+                        Teams
+                    </button>
+
+                    <button
+                        class="button word"
+                        type="button"
+                        onclick="openApp('word')"
+                    >
+                        Word
+                    </button>
+
+                    <button
+                        class="button ppt"
+                        type="button"
+                        onclick="openApp('ppt')"
+                    >
+                        PowerPoint
+                    </button>
+
+                    <button
+                        class="button onedrive"
+                        type="button"
+                        onclick="openApp('onedrive')"
+                    >
+                        OneDrive
+                    </button>
+
+                    <button
+                        class="button outlook"
+                        type="button"
+                        onclick="openApp('outlook')"
+                    >
+                        Outlook
+                    </button>
+
+                </div>
+
+            </section>
+
+            <!-- TOOLBOXEN -->
+            <section class="panel">
+
+                <h2 class="panel-title">
+                    <span
+                        class="panel-title-icon"
+                        aria-hidden="true"
+                    >
+                        🧰
+                    </span>
+
+                    Toolboxen
+                </h2>
+
+                <div class="toolbox-grid">
+
+                    <button
+                        class="button l1"
+                        type="button"
+                        onclick="openToolbox('l1')"
+                    >
+                        L1
+                    </button>
+
+                    <button
+                        class="button l2"
+                        type="button"
+                        onclick="openToolbox('l2')"
+                    >
+                        L2
+                    </button>
+
+                    <button
+                        class="button l3"
+                        type="button"
+                        onclick="openToolbox('l3')"
+                    >
+                        L3
+                    </button>
+
+                    <button
+                        class="button l4"
+                        type="button"
+                        onclick="openToolbox('l4')"
+                    >
+                        L4
+                    </button>
+
+                    <button
+                        class="button l5"
+                        type="button"
+                        onclick="openToolbox('l5')"
+                    >
+                        L5
+                    </button>
+
+                    <button
+                        class="button l6"
+                        type="button"
+                        onclick="openToolbox('l6')"
+                    >
+                        L6
+                    </button>
+
+                </div>
+
+                <h3 class="kleuter-title">
+                    Kleutertoolboxen
+                </h3>
+
+                <div class="kleuter-tools">
+
+                    <!-- K2 ALS STER -->
+                    <button
+                        class="shape-button star-button"
+                        type="button"
+                        onclick="openToolbox('k2')"
+                        aria-label="Open toolbox K2"
+                        title="Toolbox K2"
+                    >
+                        <span
+                            class="shape-icon"
+                            aria-hidden="true"
+                        >
+                            ★
+                        </span>
+
+                        <span class="shape-label">
+                            K2
+                        </span>
+                    </button>
+
+                    <!-- K3 ALS VIS -->
+                    <button
+                        class="shape-button fish-button"
+                        type="button"
+                        onclick="openToolbox('k3')"
+                        aria-label="Open toolbox K3"
+                        title="Toolbox K3"
+                    >
+                        <span
+                            class="fish-eye"
+                            aria-hidden="true"
+                        ></span>
+
+                        <span
+                            class="shape-icon"
+                            aria-hidden="true"
+                        >
+                            🐟
+                        </span>
+
+                        <span class="shape-label">
+                            K3
+                        </span>
+                    </button>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <script>
+        "use strict";
+
+        const SCHOOL_DOMAIN = "leerling.vbshgoor.be";
+        const REQUIRED_DIGITS = 6;
+
+        let scanner = null;
+        let scannerIsRunning = false;
+
+        const inputElement =
+            document.getElementById("snummer");
+
+        const readerElement =
+            document.getElementById("reader");
+
+        const statusElement =
+            document.getElementById("status");
+
+        const scannerActionsElement =
+            document.getElementById("scannerActions");
+
+        /*
+         * Enter opent standaard Teams.
+         */
+        inputElement.addEventListener(
+            "keydown",
+            function (event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    openApp("teams");
+                }
+            }
+        );
+
+        /*
+         * Spaties worden tijdens het typen verwijderd.
+         */
+        inputElement.addEventListener(
+            "input",
+            function () {
+                this.value =
+                    this.value.replace(/\s+/g, "");
+            }
+        );
+
+        /* ===== MELDINGEN ===== */
+
+        function showStatus(message, type = "") {
+            statusElement.textContent = message;
+
+            statusElement.className =
+                "status visible" +
+                (type ? " " + type : "");
         }
-    ).catch(() => {
-        alert("❌ Camera werkt niet (check HTTPS)");
-    });
-}
 
-/* ===== QR ===== */
-function handleQR(data) {
+        function hideStatus() {
+            statusElement.textContent = "";
+            statusElement.className = "status";
+        }
 
-    let raw = data.trim();
-    let user = "";
+        function clearInput() {
+            inputElement.value = "";
+            hideStatus();
+            inputElement.focus();
+        }
 
-    if (raw.includes("login_hint=")) {
-        try {
-            let url = new URL(raw);
-            user = url.searchParams.get("login_hint");
-        } catch {}
-    } else {
-        user = raw;
-    }
+        /* ===== GEBRUIKERSNAAM VERWERKEN ===== */
 
-    user = (user || "").replace(/\s/g, "").toLowerCase();
+        function cleanUserValue(value) {
+            return String(value || "")
+                .trim()
+                .replace(/\s+/g, "")
+                .toLowerCase();
+        }
 
-    if (/^[0-9]{6}$/.test(user)) {
-        user = "s" + user + "@leerling.vbshgoor.be";
-    }
+        /*
+         * Aanvaarde invoer:
+         *
+         * 123456
+         * s123456
+         * s123456@leerling.vbshgoor.be
+         *
+         * Een hoofdletter S wordt automatisch
+         * omgezet naar een kleine letter.
+         */
+        function normalizeUsername(value) {
+            let user = cleanUserValue(value);
 
-    if (/^s[0-9]{6}@leerling\.vbshgoor\.be$/.test(user)) {
-        goToTeams(user);
-        return;
-    }
+            if (!user) {
+                return null;
+            }
 
-    alert("❌ QR-code niet herkend");
-}
+            /*
+             * Alleen zes cijfers.
+             */
+            if (
+                new RegExp(
+                    "^\\d{" + REQUIRED_DIGITS + "}$"
+                ).test(user)
+            ) {
+                return (
+                    "s" +
+                    user +
+                    "@" +
+                    SCHOOL_DOMAIN
+                );
+            }
 
-/* ===== INPUT ===== */
-function getUserFromInput() {
+            /*
+             * Letter s gevolgd door zes cijfers.
+             */
+            if (
+                new RegExp(
+                    "^s\\d{" + REQUIRED_DIGITS + "}$"
+                ).test(user)
+            ) {
+                return (
+                    user +
+                    "@" +
+                    SCHOOL_DOMAIN
+                );
+            }
 
-    let s = document.getElementById("snummer").value.trim().toLowerCase();
+            /*
+             * Volledig schoolaccount.
+             */
+            const escapedDomain =
+                SCHOOL_DOMAIN.replace(
+                    /\./g,
+                    "\\."
+                );
 
-    if (!s) {
-        alert("⚠️ Typ S-nummer of scan QR");
-        return null;
-    }
+            if (
+                new RegExp(
+                    "^s\\d{" +
+                    REQUIRED_DIGITS +
+                    "}@" +
+                    escapedDomain +
+                    "$"
+                ).test(user)
+            ) {
+                return user;
+            }
 
-    if (s.includes("@")) return s;
+            return null;
+        }
 
-    if (/^[0-9]{6}$/.test(s)) {
-        return "s" + s + "@leerling.vbshgoor.be";
-    }
+        function getUserFromInput() {
+            hideStatus();
 
-    alert("⚠️ Ongeldig nummer");
-    return null;
-}
+            const originalValue =
+                inputElement.value;
 
-/* ===== LINKS ===== */
-function goToTeams(user) {
-    window.location.href = "https://teams.microsoft.com/?login_hint=" + user;
-}
+            if (!cleanUserValue(originalValue)) {
+                showStatus(
+                    "Vul eerst je S-nummer in of scan je QR-code.",
+                    "error"
+                );
 
-function openApp(app) {
+                inputElement.focus();
+                return null;
+            }
 
-    let user = getUserFromInput();
-    if (!user) return;
+            const user =
+                normalizeUsername(originalValue);
 
-    let base = {
-        word: "https://www.office.com/launch/word?auth=2&login_hint=",
-        ppt: "https://www.office.com/launch/powerpoint?auth=2&login_hint=",
-        onedrive: "https://www.office.com/launch/onedrive?auth=2&login_hint=",
-        outlook: "https://outlook.office.com/mail/?login_hint="
-    };
+            if (!user) {
+                showStatus(
+                    "Dit S-nummer is niet geldig. Gebruik bijvoorbeeld 123456 of s123456.",
+                    "error"
+                );
 
-    if (app === "teams") {
-        goToTeams(user);
-        return;
-    }
+                inputElement.focus();
+                inputElement.select();
 
-    window.location.href = base[app] + user;
-}
+                return null;
+            }
 
-/* ===== TOOLBOX ===== */
-function openToolbox(k) {
+            /*
+             * Toon de nette accountnaam ook in het invoerveld.
+             */
+            inputElement.value = user;
 
-    let links = {
-        l1: "https://www.canva.com/design/DAFUpBzBHGs/6wyDjMD8Qlq2vjbS9nKoog/view",
-        l2: "https://www.canva.com/design/DAFT_E7BGO8/g5t-f42RS_2QKPxb2QthBw/view",
-        l3: "https://www.canva.com/design/DAFULuLHwxo/D3B5GonSVhfqEqwaaD6mbw/view",
-        l4: "https://www.canva.com/design/DAGT1qUzh9s/b2FFy77S4U4Irmc41WYAeg/view",
-        l5: "https://www.canva.com/design/DAGT6iZW5Mw/K9Ui3yxsx0uSSehxgq2olg/view",
-        l6: "https://www.canva.com/design/DAFT_YiSTuo/B0CORzvLFmvSUMRDyGrfLA/view",
-        k2: "https://canva.link/c2soquwfe8ut",
-        k3: "https://canva.link/lekkdwo40lv1h7q"
-    };
+            showStatus(
+                "Account herkend: " + user,
+                "success"
+            );
 
-    window.location.href = links[k];
-}
+            return user;
+        }
 
-</script>
+        /* ===== QR-CODE VERWERKEN ===== */
+
+        function extractUserFromQR(data) {
+            const raw =
+                String(data || "").trim();
+
+            if (!raw) {
+                return null;
+            }
+
+            let possibleUser = raw;
+
+            /*
+             * Probeert login_hint uit een Microsoft-link te halen.
+             */
+            try {
+                const url = new URL(raw);
+
+                const loginHint =
+                    url.searchParams.get("login_hint");
+
+                if (loginHint) {
+                    possibleUser =
+                        decodeURIComponent(loginHint);
+                }
+            } catch (error) {
+                /*
+                 * Geen URL, dus behandel de QR-code
+                 * als gewone tekst.
+                 */
+            }
+
+            /*
+             * Ondersteuning voor QR-codes zoals:
+             * login_hint=s123456@leerling.vbshgoor.be
+             */
+            if (
+                possibleUser.includes("login_hint=")
+            ) {
+                const match =
+                    possibleUser.match(
+                        /login_hint=([^&\s]+)/i
+                    );
+
+                if (match && match[1]) {
+                    try {
+                        possibleUser =
+                            decodeURIComponent(match[1]);
+                    } catch (error) {
+                        possibleUser = match[1];
+                    }
+                }
+            }
+
+            return normalizeUsername(possibleUser);
+        }
+
+        async function handleQR(data) {
+            const user =
+                extractUserFromQR(data);
+
+            if (!user) {
+                showStatus(
+                    "De QR-code bevat geen geldig S-nummer.",
+                    "error"
+                );
+
+                return;
+            }
+
+            inputElement.value = user;
+
+            showStatus(
+                "QR-code herkend. Teams wordt geopend.",
+                "success"
+            );
+
+            await stopScan();
+            goToTeams(user);
+        }
+
+        /* ===== CAMERA ===== */
+
+        async function startScan() {
+            hideStatus();
+
+            if (
+                typeof Html5Qrcode === "undefined"
+            ) {
+                showStatus(
+                    "De QR-scanner kon niet worden geladen. Controleer de internetverbinding.",
+                    "error"
+                );
+
+                return;
+            }
+
+            if (
+                !window.isSecureContext &&
+                window.location.hostname !== "localhost"
+            ) {
+                showStatus(
+                    "De camera werkt alleen via een beveiligde HTTPS-pagina.",
+                    "error"
+                );
+
+                return;
+            }
+
+            if (scannerIsRunning) {
+                showStatus(
+                    "De camera is al actief."
+                );
+
+                return;
+            }
+
+            readerElement.innerHTML = "";
+
+            scanner =
+                new Html5Qrcode("reader");
+
+            showStatus(
+                "Camera wordt gestart..."
+            );
+
+            try {
+                const qrBoxFunction =
+                    function (
+                        viewfinderWidth,
+                        viewfinderHeight
+                    ) {
+                        const minimumEdge =
+                            Math.min(
+                                viewfinderWidth,
+                                viewfinderHeight
+                            );
+
+                        const size =
+                            Math.floor(
+                                minimumEdge * 0.72
+                            );
+
+                        return {
+                            width: size,
+                            height: size
+                        };
+                    };
+
+                await scanner.start(
+                    {
+                        facingMode: {
+                            ideal: "environment"
+                        }
+                    },
+                    {
+                        fps: 10,
+                        qrbox: qrBoxFunction,
+                        aspectRatio: 1
+                    },
+                    async function (
+                        decodedText
+                    ) {
+                        await handleQR(
+                            decodedText
+                        );
+                    },
+                    function () {
+                        /*
+                         * Geen melding nodig wanneer
+                         * een camerabeeld geen QR-code bevat.
+                         */
+                    }
+                );
+
+                scannerIsRunning = true;
+
+                scannerActionsElement.classList.add(
+                    "visible"
+                );
+
+                showStatus(
+                    "Camera actief. Houd de QR-code in beeld.",
+                    "success"
+                );
+            } catch (error) {
+                scannerIsRunning = false;
+                scanner = null;
+
+                readerElement.innerHTML = "";
+
+                scannerActionsElement.classList.remove(
+                    "visible"
+                );
+
+                let message =
+                    "De camera kon niet worden gestart.";
+
+                if (
+                    error &&
+                    String(error).toLowerCase().includes(
+                        "permission"
+                    )
+                ) {
+                    message =
+                        "Geen cameratoegang. Geef deze website toestemming om de camera te gebruiken.";
+                } else if (
+                    error &&
+                    String(error).toLowerCase().includes(
+                        "notfound"
+                    )
+                ) {
+                    message =
+                        "Er werd geen bruikbare camera gevonden.";
+                } else if (
+                    !window.isSecureContext
+                ) {
+                    message =
+                        "De camera werkt alleen wanneer de website via HTTPS geopend wordt.";
+                }
+
+                showStatus(
+                    message,
+                    "error"
+                );
+
+                console.error(
+                    "Camera kon niet starten:",
+                    error
+                );
+            }
+        }
+
+        async function stopScan() {
+            if (!scanner) {
+                readerElement.innerHTML = "";
+
+                scannerActionsElement.classList.remove(
+                    "visible"
+                );
+
+                scannerIsRunning = false;
+                return;
+            }
+
+            try {
+                if (scannerIsRunning) {
+                    await scanner.stop();
+                }
+
+                await scanner.clear();
+            } catch (error) {
+                console.warn(
+                    "Scanner kon niet volledig worden afgesloten:",
+                    error
+                );
+            } finally {
+                scanner = null;
+                scannerIsRunning = false;
+
+                readerElement.innerHTML = "";
+
+                scannerActionsElement.classList.remove(
+                    "visible"
+                );
+            }
+        }
+
+        /* ===== MICROSOFT 365-LINKS ===== */
+
+        function goToTeams(user) {
+            const url =
+                "https://teams.microsoft.com/?login_hint=" +
+                encodeURIComponent(user);
+
+            window.location.href = url;
+        }
+
+        function openApp(app) {
+            const user =
+                getUserFromInput();
+
+            if (!user) {
+                return;
+            }
+
+            const links = {
+                teams:
+                    "https://teams.microsoft.com/?login_hint=",
+
+                word:
+                    "https://www.office.com/launch/word?auth=2&login_hint=",
+
+                ppt:
+                    "https://www.office.com/launch/powerpoint?auth=2&login_hint=",
+
+                onedrive:
+                    "https://www.office.com/launch/onedrive?auth=2&login_hint=",
+
+                outlook:
+                    "https://outlook.office.com/mail/?login_hint="
+            };
+
+            if (!links[app]) {
+                showStatus(
+                    "Deze toepassing is niet beschikbaar.",
+                    "error"
+                );
+
+                return;
+            }
+
+            window.location.href =
+                links[app] +
+                encodeURIComponent(user);
+        }
+
+        /* ===== TOOLBOXEN ===== */
+
+        function openToolbox(toolbox) {
+            const links = {
+                l1:
+                    "https://www.canva.com/design/DAFUpBzBHGs/6wyDjMD8Qlq2vjbS9nKoog/view",
+
+                l2:
+                    "https://www.canva.com/design/DAFT_E7BGO8/g5t-f42RS_2QKPxb2QthBw/view",
+
+                l3:
+                    "https://www.canva.com/design/DAFULuLHwxo/D3B5GonSVhfqEqwaaD6mbw/view",
+
+                l4:
+                    "https://www.canva.com/design/DAGT1qUzh9s/b2FFy77S4U4Irmc41WYAeg/view",
+
+                l5:
+                    "https://www.canva.com/design/DAGT6iZW5Mw/K9Ui3yxsx0uSSehxgq2olg/view",
+
+                l6:
+                    "https://www.canva.com/design/DAFT_YiSTuo/B0CORzvLFmvSUMRDyGrfLA/view",
+
+                k2:
+                    "https://canva.link/c2soquwfe8ut",
+
+                k3:
+                    "https://canva.link/lekkdwo40lv1h7q"
+            };
+
+            if (!links[toolbox]) {
+                showStatus(
+                    "De link van deze toolbox werd niet gevonden.",
+                    "error"
+                );
+
+                return;
+            }
+
+            window.location.href =
+                links[toolbox];
+        }
+
+        /* ===== KLEUREN UIT HET LOGO HALEN ===== */
+
+        function rgbToHex(red, green, blue) {
+            return (
+                "#" +
+                [red, green, blue]
+                    .map(function (value) {
+                        return Math.max(
+                            0,
+                            Math.min(
+                                255,
+                                Math.round(value)
+                            )
+                        )
+                            .toString(16)
+                            .padStart(2, "0");
+                    })
+                    .join("")
+            );
+        }
+
+        function rgbToHsl(red, green, blue) {
+            red /= 255;
+            green /= 255;
+            blue /= 255;
+
+            const maximum =
+                Math.max(red, green, blue);
+
+            const minimum =
+                Math.min(red, green, blue);
+
+            let hue = 0;
+            let saturation = 0;
+
+            const lightness =
+                (maximum + minimum) / 2;
+
+            const difference =
+                maximum - minimum;
+
+            if (difference !== 0) {
+                saturation =
+                    lightness > 0.5
+                        ? difference /
+                          (2 - maximum - minimum)
+                        : difference /
+                          (maximum + minimum);
+
+                switch (maximum) {
+                    case red:
+                        hue =
+                            (
+                                (green - blue) /
+                                difference
+                            ) +
+                            (
+                                green < blue
+                                    ? 6
+                                    : 0
+                            );
+                        break;
+
+                    case green:
+                        hue =
+                            (
+                                (blue - red) /
+                                difference
+                            ) + 2;
+                        break;
+
+                    default:
+                        hue =
+                            (
+                                (red - green) /
+                                difference
+                            ) + 4;
+                }
+
+                hue /= 6;
+            }
+
+            return {
+                h: hue * 360,
+                s: saturation * 100,
+                l: lightness * 100
+            };
+        }
+
+        /*
+         * Probeert de opvallendste kleuren uit het logo
+         * te gebruiken voor de pagina.
+         *
+         * Wanneer dit niet lukt, blijven de vooraf
+         * ingestelde kleuren actief.
+         */
+        function applyLogoColors(image) {
+            try {
+                const canvas =
+                    document.createElement("canvas");
+
+                const context =
+                    canvas.getContext(
+                        "2d",
+                        {
+                            willReadFrequently: true
+                        }
+                    );
+
+                canvas.width = 100;
+                canvas.height = 100;
+
+                context.drawImage(
+                    image,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+                const pixels =
+                    context.getImageData(
+                        0,
+                        0,
+                        canvas.width,
+                        canvas.height
+                    ).data;
+
+                const colorGroups = {};
+
+                for (
+                    let index = 0;
+                    index < pixels.length;
+                    index += 20
+                ) {
+                    const red = pixels[index];
+                    const green = pixels[index + 1];
+                    const blue = pixels[index + 2];
+                    const alpha = pixels[index + 3];
+
+                    if (alpha < 180) {
+                        continue;
+                    }
+
+                    const hsl =
+                        rgbToHsl(
+                            red,
+                            green,
+                            blue
+                        );
+
+                    /*
+                     * Witte, grijze, zwarte en erg bleke
+                     * pixels worden niet gebruikt.
+                     */
+                    if (
+                        hsl.s < 35 ||
+                        hsl.l < 20 ||
+                        hsl.l > 82
+                    ) {
+                        continue;
+                    }
+
+                    const hueGroup =
+                        Math.round(hsl.h / 25) * 25;
+
+                    if (!colorGroups[hueGroup]) {
+                        colorGroups[hueGroup] = {
+                            red: 0,
+                            green: 0,
+                            blue: 0,
+                            amount: 0,
+                            score: 0
+                        };
+                    }
+
+                    colorGroups[hueGroup].red += red;
+                    colorGroups[hueGroup].green += green;
+                    colorGroups[hueGroup].blue += blue;
+                    colorGroups[hueGroup].amount += 1;
+
+                    colorGroups[hueGroup].score +=
+                        hsl.s *
+                        (
+                            100 -
+                            Math.abs(
+                                hsl.l - 52
+                            )
+                        );
+                }
+
+                const colors =
+                    Object.values(colorGroups)
+                        .filter(function (group) {
+                            return group.amount > 3;
+                        })
+                        .sort(function (a, b) {
+                            return b.score - a.score;
+                        })
+                        .map(function (group) {
+                            return {
+                                red:
+                                    group.red /
+                                    group.amount,
+
+                                green:
+                                    group.green /
+                                    group.amount,
+
+                                blue:
+                                    group.blue /
+                                    group.amount
+                            };
+                        });
+
+                if (colors.length === 0) {
+                    return;
+                }
+
+                const root =
+                    document.documentElement;
+
+                const primary =
+                    colors[0];
+
+                root.style.setProperty(
+                    "--primary",
+                    rgbToHex(
+                        primary.red,
+                        primary.green,
+                        primary.blue
+                    )
+                );
+
+                /*
+                 * Maakt een donkerdere versie
+                 * van de primaire logokleur.
+                 */
+                root.style.setProperty(
+                    "--primary-dark",
+                    rgbToHex(
+                        primary.red * 0.67,
+                        primary.green * 0.67,
+                        primary.blue * 0.67
+                    )
+                );
+
+                if (colors[1]) {
+                    root.style.setProperty(
+                        "--secondary",
+                        rgbToHex(
+                            colors[1].red,
+                            colors[1].green,
+                            colors[1].blue
+                        )
+                    );
+                }
+
+                if (colors[2]) {
+                    root.style.setProperty(
+                        "--accent",
+                        rgbToHex(
+                            colors[2].red,
+                            colors[2].green,
+                            colors[2].blue
+                        )
+                    );
+                }
+
+                if (colors[3]) {
+                    root.style.setProperty(
+                        "--accent-two",
+                        rgbToHex(
+                            colors[3].red,
+                            colors[3].green,
+                            colors[3].blue
+                        )
+                    );
+                }
+            } catch (error) {
+                console.warn(
+                    "De logokleuren konden niet automatisch worden bepaald. De standaardkleuren worden gebruikt.",
+                    error
+                );
+            }
+        }
+
+        function handleLogoError(image) {
+            image.style.display = "none";
+
+            const wrapper =
+                image.closest(".logo-wrapper");
+
+            if (wrapper) {
+                wrapper.textContent = "Pip & Japi";
+                wrapper.style.color =
+                    "var(--primary-dark)";
+                wrapper.style.fontWeight = "800";
+                wrapper.style.textAlign = "center";
+            }
+
+            console.warn(
+                "pip&japi.png werd niet gevonden. Controleer of het bestand naast index.html in de hoofdmap staat."
+            );
+        }
+
+        /*
+         * Camera correct afsluiten wanneer iemand
+         * de pagina verlaat.
+         */
+        window.addEventListener(
+            "pagehide",
+            function () {
+                if (
+                    scanner &&
+                    scannerIsRunning
+                ) {
+                    scanner
+                        .stop()
+                        .catch(function () {});
+                }
+            }
+        );
+    </script>
 
 </body>
 </html>

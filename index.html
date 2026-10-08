@@ -7,58 +7,13 @@
   <title>Loginhelper Pip &amp; Japi</title>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <style>
-    :root {
-      --turquoise:#42a8a1; --turquoise-dark:#247a77; --yellow:#f9c846;
-      --orange:#ed9146; --pink:#e96f88; --purple:#7d72c8; --green:#7bbd54;
-      --background:#eaf7f5; --surface:#fff; --surface-soft:#f5fbfa;
-      --text:#263c3c; --border:#9ed9d5; --shadow:0 10px 28px rgba(36,75,73,.15);
-    }
-    *{box-sizing:border-box} html,body{width:100%;min-height:100%;margin:0}
-    body{padding:10px;color:var(--text);font-family:"Segoe UI",Arial,sans-serif;background:radial-gradient(circle at top left,rgba(249,200,70,.25),transparent 31%),radial-gradient(circle at bottom right,rgba(66,168,161,.27),transparent 38%),var(--background)}
-    button,input{font:inherit} button{-webkit-tap-highlight-color:transparent}
-    .container{width:min(1240px,100%);min-height:calc(100vh - 20px);margin:0 auto;padding:14px 16px;background:rgba(255,255,255,.97);border:3px solid var(--border);border-radius:22px;box-shadow:var(--shadow)}
-    .topbar{display:grid;grid-template-columns:210px minmax(180px,1fr) minmax(500px,620px);align-items:center;gap:18px;margin-bottom:14px}
-    .logo-box{display:flex;align-items:center;width:210px;height:85px;overflow:hidden}
-    .logo-box img{display:block;width:100%;height:100%;object-fit:contain;object-position:left center}
-    .page-title{margin:0;color:var(--turquoise-dark);font-size:clamp(30px,4vw,44px);font-weight:800;line-height:1}
-    .login-card{width:100%;padding:10px;background:linear-gradient(145deg,var(--surface-soft),var(--surface));border:2px solid var(--turquoise);border-radius:15px}
-    .input-row{display:grid;grid-template-columns:minmax(0,1fr) 48px minmax(250px,310px);gap:7px}
-    #snummer{width:100%;min-width:0;height:46px;padding:9px 13px;color:var(--text);font-size:17px;font-weight:600;background:#fff;border:2px solid var(--border);border-radius:10px;outline:none}
-    #snummer:focus{border-color:var(--turquoise);box-shadow:0 0 0 3px rgba(66,168,161,.2)}
-    #snummer::placeholder{color:#8c9c9b;font-weight:400}
-    .clear-button{width:48px;height:46px;padding:0;color:#fff;background:var(--pink);border:0;border-radius:10px;font-size:24px;font-weight:800;cursor:pointer}
-    .scan-choice{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-    .scan-button{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:46px;padding:0 9px;color:#fff;border:0;border-radius:10px;font-size:13px;font-weight:750;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.12)}
-    .scan-microsoft{background:linear-gradient(135deg,#6264a7,#444791)}
-    .scan-kabas{background:linear-gradient(135deg,#f28c28,#d56708)}
-    .clear-button:hover,.scan-button:hover{filter:brightness(1.06);transform:translateY(-1px)}
-    .main-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:14px}
-    .panel{min-height:390px;padding:14px;background:linear-gradient(145deg,#fff,var(--surface-soft));border:2px solid var(--border);border-radius:16px}
-    .panel-title{display:flex;align-items:center;gap:9px;margin:0 0 11px;color:var(--turquoise-dark);font-size:21px;font-weight:800}
-    .panel-title-icon{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;color:#fff;background:var(--turquoise);border-radius:10px;font-size:20px;font-weight:800}
-    .button{width:100%;min-height:46px;padding:10px 12px;color:#fff;font-size:15px;font-weight:750;border:0;border-radius:11px;box-shadow:0 4px 10px rgba(0,0,0,.12);cursor:pointer;transition:transform .18s,filter .18s,box-shadow .18s}
-    .button:hover{filter:brightness(1.06);transform:translateY(-2px);box-shadow:0 7px 14px rgba(0,0,0,.15)}
-    .button:focus-visible,.clear-button:focus-visible,.scan-button:focus-visible,.shape-button:focus-visible{outline:4px solid rgba(249,200,70,.75);outline-offset:3px}
-    .office-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-    .teams{background:#6264a7}.word{background:#2b579a}.powerpoint{background:#d24726}.onedrive{background:#0078d4}.outlook{grid-column:1/-1;background:#0072c6}
-    .toolbox-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}.toolbox-grid .button{min-height:44px;padding:8px 5px}
-    .l1{background:var(--turquoise)}.l2{background:var(--green)}.l3{color:#4b3810;background:var(--yellow)}.l4{background:var(--orange)}.l5{background:var(--pink)}.l6{background:var(--purple)}
-    .kleuter-tools{display:flex;align-items:center;justify-content:center;gap:52px;min-height:235px;padding-top:12px}
-    .shape-button{position:relative;display:flex;align-items:center;justify-content:center;color:#fff;border:0;cursor:pointer;filter:drop-shadow(0 7px 7px rgba(0,0,0,.2));transition:transform .18s,filter .18s}
-    .shape-button:hover{transform:scale(1.06)}.shape-label{position:relative;z-index:2;font-size:24px;font-weight:900;text-shadow:1px 2px 3px rgba(0,0,0,.3)}
-    .star-button{width:150px;height:150px;padding:24px;background:linear-gradient(145deg,var(--yellow),var(--orange));clip-path:polygon(50% 0,61% 34%,98% 35%,68% 56%,79% 92%,50% 71%,21% 92%,32% 56%,2% 35%,39% 34%)}
-    .fish-button{width:190px;height:132px;padding:15px 31px 15px 50px;background:linear-gradient(135deg,var(--turquoise),var(--purple));clip-path:polygon(0 7%,28% 29%,43% 14%,67% 8%,88% 20%,100% 50%,88% 80%,67% 92%,43% 86%,28% 71%,0 93%,13% 50%)}
-    .fish-eye{position:absolute;top:31px;right:31px;width:16px;height:16px;background:#fff;border:4px solid var(--text);border-radius:50%}
-    .fish-fin{position:absolute;bottom:19px;left:89px;width:30px;height:23px;background:rgba(255,255,255,.5);clip-path:polygon(50% 100%,0 0,100% 0)}
-    .scanner-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:12px;background:rgba(15,23,42,.74)}
-    .scanner-modal.open{display:flex}.scanner-panel{width:min(540px,96vw);max-height:96vh;padding:11px;overflow:auto;background:#fff;border-radius:15px;box-shadow:0 14px 42px rgba(0,0,0,.35)}
-    .scanner-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}.scanner-header h2{margin:0;color:var(--turquoise-dark);font-size:20px}.closebtn{min-width:92px;padding:9px 12px;background:var(--turquoise-dark)}
-    #reader{width:100%;min-height:310px;margin:0;overflow:hidden;background:#e9eef5;border-radius:11px}#reader video{width:100%!important;object-fit:cover!important}.scan-status{margin:0 0 8px;color:#4b5563;text-align:center;font-size:14px}
-    @media(max-width:1100px){.topbar{grid-template-columns:180px minmax(150px,.7fr) minmax(460px,1.5fr);gap:12px}.logo-box{width:180px;height:75px}.page-title{font-size:34px}}
-    @media(max-width:900px){.topbar{grid-template-columns:165px 1fr}.logo-box{width:165px}.login-card{grid-column:1/-1}.main-grid{grid-template-columns:1fr 1fr}.toolbox-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.kleuter-tools{gap:18px}.star-button{width:125px;height:125px}.fish-button{width:155px;height:108px}}
-    @media(max-width:680px){body{padding:6px}.container{min-height:calc(100vh - 12px);padding:10px;border-radius:17px}.topbar{grid-template-columns:135px 1fr;gap:8px}.logo-box{width:135px;height:65px}.page-title{font-size:29px}.input-row{grid-template-columns:minmax(0,1fr) 46px}.scan-choice{grid-column:1/-1}.main-grid{grid-template-columns:1fr}.panel{min-height:auto}}
-    @media(max-width:420px){.topbar{grid-template-columns:1fr;justify-items:center}.logo-box{justify-content:center;width:170px;height:75px}.logo-box img{object-position:center}.page-title{text-align:center}.office-grid{grid-template-columns:1fr}.outlook{grid-column:auto}.toolbox-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kleuter-tools{flex-direction:column}}
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important}}
+    :root {--turquoise:#42a8a1;--turquoise-dark:#247a77;--yellow:#f9c846;--orange:#ed9146;--pink:#e96f88;--purple:#7d72c8;--green:#7bbd54;--background:#eaf7f5;--surface:#fff;--surface-soft:#f5fbfa;--text:#263c3c;--border:#9ed9d5;--shadow:0 10px 28px rgba(36,75,73,.15)}
+    *{box-sizing:border-box}html,body{width:100%;min-height:100%;margin:0}body{padding:10px;color:var(--text);font-family:"Segoe UI",Arial,sans-serif;background:radial-gradient(circle at top left,rgba(249,200,70,.25),transparent 31%),radial-gradient(circle at bottom right,rgba(66,168,161,.27),transparent 38%),var(--background)}button,input{font:inherit}button{-webkit-tap-highlight-color:transparent}.container{width:min(1240px,100%);min-height:calc(100vh - 20px);margin:0 auto;padding:14px 16px;background:rgba(255,255,255,.97);border:3px solid var(--border);border-radius:22px;box-shadow:var(--shadow)}
+    .topbar{display:grid;grid-template-columns:210px minmax(180px,1fr) minmax(500px,620px);align-items:center;gap:18px;margin-bottom:14px}.logo-box{display:flex;align-items:center;width:210px;height:85px;overflow:hidden}.logo-box img{display:block;width:100%;height:100%;object-fit:contain;object-position:left center}.page-title{margin:0;color:var(--turquoise-dark);font-size:clamp(30px,4vw,44px);font-weight:800;line-height:1}.login-card{width:100%;padding:10px;background:linear-gradient(145deg,var(--surface-soft),var(--surface));border:2px solid var(--turquoise);border-radius:15px}.input-row{display:grid;grid-template-columns:minmax(0,1fr) 48px minmax(250px,310px);gap:7px}#snummer{width:100%;min-width:0;height:46px;padding:9px 13px;color:var(--text);font-size:17px;font-weight:600;background:#fff;border:2px solid var(--border);border-radius:10px;outline:none}#snummer:focus{border-color:var(--turquoise);box-shadow:0 0 0 3px rgba(66,168,161,.2)}#snummer::placeholder{color:#8c9c9b;font-weight:400}.clear-button{width:48px;height:46px;padding:0;color:#fff;background:var(--pink);border:0;border-radius:10px;font-size:24px;font-weight:800;cursor:pointer}.scan-choice{display:grid;grid-template-columns:1fr 1fr;gap:7px}.scan-button{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:46px;padding:0 9px;color:#fff;border:0;border-radius:10px;font-size:13px;font-weight:750;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.12)}.scan-microsoft{background:linear-gradient(135deg,#6264a7,#444791)}.scan-kabas{background:linear-gradient(135deg,#f28c28,#d56708)}.clear-button:hover,.scan-button:hover{filter:brightness(1.06);transform:translateY(-1px)}
+    .main-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:14px}.panel{min-height:390px;padding:14px;background:linear-gradient(145deg,#fff,var(--surface-soft));border:2px solid var(--border);border-radius:16px}.panel-title{display:flex;align-items:center;gap:9px;margin:0 0 11px;color:var(--turquoise-dark);font-size:21px;font-weight:800}.panel-title-icon{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;color:#fff;background:var(--turquoise);border-radius:10px;font-size:20px;font-weight:800}.button{width:100%;min-height:46px;padding:10px 12px;color:#fff;font-size:15px;font-weight:750;border:0;border-radius:11px;box-shadow:0 4px 10px rgba(0,0,0,.12);cursor:pointer;transition:transform .18s,filter .18s,box-shadow .18s}.button:hover{filter:brightness(1.06);transform:translateY(-2px);box-shadow:0 7px 14px rgba(0,0,0,.15)}.button:focus-visible,.clear-button:focus-visible,.scan-button:focus-visible,.shape-button:focus-visible{outline:4px solid rgba(249,200,70,.75);outline-offset:3px}.office-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.teams{background:#6264a7}.word{background:#2b579a}.powerpoint{background:#d24726}.onedrive{background:#0078d4}.outlook{grid-column:1/-1;background:#0072c6}.toolbox-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}.toolbox-grid .button{min-height:44px;padding:8px 5px}.l1{background:var(--turquoise)}.l2{background:var(--green)}.l3{color:#4b3810;background:var(--yellow)}.l4{background:var(--orange)}.l5{background:var(--pink)}.l6{background:var(--purple)}
+    .kleuter-tools{display:flex;align-items:center;justify-content:center;gap:52px;min-height:235px;padding-top:12px}.shape-button{position:relative;display:flex;align-items:center;justify-content:center;color:#fff;border:0;cursor:pointer;filter:drop-shadow(0 7px 7px rgba(0,0,0,.2));transition:transform .18s,filter .18s}.shape-button:hover{transform:scale(1.06)}.shape-label{position:relative;z-index:2;font-size:24px;font-weight:900;text-shadow:1px 2px 3px rgba(0,0,0,.3)}.star-button{width:150px;height:150px;padding:24px;background:linear-gradient(145deg,var(--yellow),var(--orange));clip-path:polygon(50% 0,61% 34%,98% 35%,68% 56%,79% 92%,50% 71%,21% 92%,32% 56%,2% 35%,39% 34%)}.fish-button{width:190px;height:132px;padding:15px 31px 15px 50px;background:linear-gradient(135deg,var(--turquoise),var(--purple));clip-path:polygon(0 7%,28% 29%,43% 14%,67% 8%,88% 20%,100% 50%,88% 80%,67% 92%,43% 86%,28% 71%,0 93%,13% 50%)}.fish-eye{position:absolute;top:31px;right:31px;width:16px;height:16px;background:#fff;border:4px solid var(--text);border-radius:50%}.fish-fin{position:absolute;bottom:19px;left:89px;width:30px;height:23px;background:rgba(255,255,255,.5);clip-path:polygon(50% 100%,0 0,100% 0)}
+    .scanner-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:12px;background:rgba(15,23,42,.74)}.scanner-modal.open{display:flex}.scanner-panel{width:min(540px,96vw);max-height:96vh;padding:11px;overflow:auto;background:#fff;border-radius:15px;box-shadow:0 14px 42px rgba(0,0,0,.35)}.scanner-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}.scanner-header h2{margin:0;color:var(--turquoise-dark);font-size:20px}.closebtn{min-width:92px;padding:9px 12px;background:var(--turquoise-dark)}#reader{width:100%;min-height:310px;margin:0;overflow:hidden;background:#e9eef5;border-radius:11px}#reader video{width:100%!important;object-fit:cover!important}.scan-status{margin:0 0 8px;color:#4b5563;text-align:center;font-size:14px}
+    @media(max-width:1100px){.topbar{grid-template-columns:180px minmax(150px,.7fr) minmax(460px,1.5fr);gap:12px}.logo-box{width:180px;height:75px}.page-title{font-size:34px}}@media(max-width:900px){.topbar{grid-template-columns:165px 1fr}.logo-box{width:165px}.login-card{grid-column:1/-1}.main-grid{grid-template-columns:1fr 1fr}.toolbox-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.kleuter-tools{gap:18px}.star-button{width:125px;height:125px}.fish-button{width:155px;height:108px}}@media(max-width:680px){body{padding:6px}.container{min-height:calc(100vh - 12px);padding:10px;border-radius:17px}.topbar{grid-template-columns:135px 1fr;gap:8px}.logo-box{width:135px;height:65px}.page-title{font-size:29px}.input-row{grid-template-columns:minmax(0,1fr) 46px}.scan-choice{grid-column:1/-1}.main-grid{grid-template-columns:1fr}.panel{min-height:auto}}@media(max-width:420px){.topbar{grid-template-columns:1fr;justify-items:center}.logo-box{justify-content:center;width:170px;height:75px}.logo-box img{object-position:center}.page-title{text-align:center}.office-grid{grid-template-columns:1fr}.outlook{grid-column:auto}.toolbox-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kleuter-tools{flex-direction:column}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important}}
   </style>
 </head>
 <body>
@@ -66,238 +21,39 @@
     <header class="topbar">
       <div class="logo-box"><img id="schoolLogo" src="./pip_japi.png" alt="Pip en Japi"></div>
       <h1 class="page-title">Loginhelper</h1>
-      <div class="login-card">
-        <div class="input-row">
-          <input id="snummer" type="text" inputmode="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="S-nummer" maxlength="60" aria-label="S-nummer">
-          <button class="clear-button" type="button" onclick="clearInput()" aria-label="S-nummer wissen" title="S-nummer wissen">×</button>
-          <div class="scan-choice">
-            <button class="scan-button scan-microsoft" type="button" onclick="startScan('microsoft')"><span aria-hidden="true">📷</span><span>Microsoft</span></button>
-            <button class="scan-button scan-kabas" type="button" onclick="startScan('kabas')"><span aria-hidden="true">📷</span><span>Kabas</span></button>
-          </div>
-        </div>
-      </div>
+      <div class="login-card"><div class="input-row"><input id="snummer" type="text" inputmode="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="S-nummer" maxlength="60" aria-label="S-nummer"><button class="clear-button" type="button" onclick="clearInput()" aria-label="S-nummer wissen" title="S-nummer wissen">×</button><div class="scan-choice"><button class="scan-button scan-microsoft" type="button" onclick="startScan('microsoft')"><span aria-hidden="true">📷</span><span>Microsoft</span></button><button class="scan-button scan-kabas" type="button" onclick="startScan('kabas')"><span aria-hidden="true">📷</span><span>Kabas</span></button></div></div></div>
     </header>
-
     <div class="main-grid">
-      <section class="panel">
-        <h2 class="panel-title"><span class="panel-title-icon" aria-hidden="true">M</span>Microsoft 365</h2>
-        <div class="office-grid">
-          <button class="button teams" type="button" onclick="openApp('teams')">Teams</button>
-          <button class="button word" type="button" onclick="openApp('word')">Word</button>
-          <button class="button powerpoint" type="button" onclick="openApp('powerpoint')">PowerPoint</button>
-          <button class="button onedrive" type="button" onclick="openApp('onedrive')">OneDrive</button>
-          <button class="button outlook" type="button" onclick="openApp('outlook')">Outlook</button>
-        </div>
-      </section>
-
-      <section class="panel">
-        <h2 class="panel-title"><span class="panel-title-icon" aria-hidden="true">🧰</span>Toolboxen</h2>
-        <div class="toolbox-grid">
-          <button class="button l1" type="button" onclick="openToolbox('l1')">L1</button>
-          <button class="button l2" type="button" onclick="openToolbox('l2')">L2</button>
-          <button class="button l3" type="button" onclick="openToolbox('l3')">L3</button>
-          <button class="button l4" type="button" onclick="openToolbox('l4')">L4</button>
-          <button class="button l5" type="button" onclick="openToolbox('l5')">L5</button>
-          <button class="button l6" type="button" onclick="openToolbox('l6')">L6</button>
-        </div>
-        <div class="kleuter-tools">
-          <button class="shape-button star-button" type="button" onclick="openToolbox('k2')" aria-label="Open toolbox K2"><span class="shape-label">K2</span></button>
-          <button class="shape-button fish-button" type="button" onclick="openToolbox('k3')" aria-label="Open toolbox K3"><span class="fish-eye" aria-hidden="true"></span><span class="fish-fin" aria-hidden="true"></span><span class="shape-label">K3</span></button>
-        </div>
-      </section>
+      <section class="panel"><h2 class="panel-title"><span class="panel-title-icon" aria-hidden="true">M</span>Microsoft 365</h2><div class="office-grid"><button class="button teams" type="button" onclick="openApp('teams')">Teams</button><button class="button word" type="button" onclick="openApp('word')">Word</button><button class="button powerpoint" type="button" onclick="openApp('powerpoint')">PowerPoint</button><button class="button onedrive" type="button" onclick="openApp('onedrive')">OneDrive</button><button class="button outlook" type="button" onclick="openApp('outlook')">Outlook</button></div></section>
+      <section class="panel"><h2 class="panel-title"><span class="panel-title-icon" aria-hidden="true">🧰</span>Toolboxen</h2><div class="toolbox-grid"><button class="button l1" type="button" onclick="openToolbox('l1')">L1</button><button class="button l2" type="button" onclick="openToolbox('l2')">L2</button><button class="button l3" type="button" onclick="openToolbox('l3')">L3</button><button class="button l4" type="button" onclick="openToolbox('l4')">L4</button><button class="button l5" type="button" onclick="openToolbox('l5')">L5</button><button class="button l6" type="button" onclick="openToolbox('l6')">L6</button></div><div class="kleuter-tools"><button class="shape-button star-button" type="button" onclick="openToolbox('k2')" aria-label="Open toolbox K2"><span class="shape-label">K2</span></button><button class="shape-button fish-button" type="button" onclick="openToolbox('k3')" aria-label="Open toolbox K3"><span class="fish-eye" aria-hidden="true"></span><span class="fish-fin" aria-hidden="true"></span><span class="shape-label">K3</span></button></div></section>
     </div>
   </main>
-
-  <div id="scannerModal" class="scanner-modal" role="dialog" aria-modal="true" aria-labelledby="scannerTitle">
-    <div class="scanner-panel">
-      <div class="scanner-header">
-        <h2 id="scannerTitle">Scan de QR-code</h2>
-        <button class="button closebtn" type="button" onclick="closeScanner()">✕ Sluiten</button>
-      </div>
-      <p id="scanStatus" class="scan-status">Camera starten...</p>
-      <div id="reader"></div>
-    </div>
-  </div>
-
+  <div id="scannerModal" class="scanner-modal" role="dialog" aria-modal="true" aria-labelledby="scannerTitle"><div class="scanner-panel"><div class="scanner-header"><h2 id="scannerTitle">Scan de QR-code</h2><button class="button closebtn" type="button" onclick="closeScanner()">✕ Sluiten</button></div><p id="scanStatus" class="scan-status">Camera starten...</p><div id="reader"></div></div></div>
   <script>
     "use strict";
-
-    const SCHOOL_DOMAIN = "leerling.vbshgoor.be";
-    const ALLOWED_KABAS_HOSTS = ["kabas.be", "www.kabas.be", "api.kabas.be"];
-    let scanner = null;
-    let running = false;
-    let starting = false;
-    let resultHandled = false;
-    let scanMode = null;
-
-    const inputElement = document.getElementById("snummer");
-    const scannerModal = document.getElementById("scannerModal");
-    const scanStatus = document.getElementById("scanStatus");
-    const scannerTitle = document.getElementById("scannerTitle");
-    const schoolLogoElement = document.getElementById("schoolLogo");
-
-    if (schoolLogoElement) {
-      schoolLogoElement.addEventListener("error", function () {
-        schoolLogoElement.style.display = "none";
-        console.error("Logo niet gevonden. Controleer of pip_japi.png naast index.html staat.");
-      });
-    }
-
-    window.addEventListener("load", function () { inputElement.focus(); });
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") closeScanner();
-      if (event.key === "Enter" && document.activeElement === inputElement) openApp("teams");
-    });
-    scannerModal.addEventListener("click", function (event) { if (event.target === scannerModal) closeScanner(); });
-    inputElement.addEventListener("input", function () { this.value = this.value.replace(/\s+/g, ""); });
-
-    function clearInput() { inputElement.value = ""; inputElement.focus(); }
-
-    function normalizeUser(value) {
-      let user = String(value || "").trim().replace(/\s/g, "").toLowerCase();
-      if (/^\d{6}$/.test(user)) user = "s" + user + "@" + SCHOOL_DOMAIN;
-      if (/^s\d{6}$/.test(user)) user += "@" + SCHOOL_DOMAIN;
-      if (/^\d{6}@leerling\.vbshgoor\.be$/.test(user)) user = "s" + user;
-      return user;
-    }
-
-    function isValidUser(user) { return /^s\d{6}@leerling\.vbshgoor\.be$/.test(user); }
-
-    function getUserFromInput() {
-      if (!inputElement.value.trim()) {
-        alert("Typ een S-nummer of scan een Microsoft QR-code.");
-        inputElement.focus();
-        return null;
-      }
-      const user = normalizeUser(inputElement.value);
-      if (!isValidUser(user)) {
-        alert("Ongeldig S-nummer. Gebruik 6 cijfers, eventueel voorafgegaan door s.");
-        inputElement.focus(); inputElement.select(); return null;
-      }
-      inputElement.value = user.split("@")[0];
-      return user;
-    }
-
-    function handleMicrosoftQR(data) {
-      const raw = String(data || "").trim();
-      let user = raw;
-      if (raw.toLowerCase().includes("login_hint=")) {
-        try { user = new URL(raw).searchParams.get("login_hint") || ""; }
-        catch (error) {
-          const match = raw.match(/[?&]login_hint=([^&]+)/i);
-          user = match ? decodeURIComponent(match[1]) : "";
-        }
-      }
-      user = normalizeUser(user);
-      inputElement.value = user.split("@")[0] || user;
-      if (!isValidUser(user)) {
-        alert("Dit is geen geldige Microsoft QR-code.");
-        inputElement.focus(); inputElement.select(); return;
-      }
-      goToTeams(user);
-    }
-
-    function handleKabasQR(data) {
-      const raw = String(data || "").trim();
-      let kabasUrl;
-      try { kabasUrl = new URL(raw); }
-      catch (error) { alert("Deze QR-code bevat geen herkenbare Kabas-link."); return; }
-
-      if (kabasUrl.protocol !== "https:") {
-        alert("De Kabas-link is niet beveiligd en werd daarom niet geopend.");
-        return;
-      }
-
-      const hostname = kabasUrl.hostname.toLowerCase();
-      const isAllowed = ALLOWED_KABAS_HOSTS.some(function (host) {
-        return hostname === host || hostname.endsWith("." + host);
-      });
-      if (!isAllowed) {
-        alert("Deze QR-code verwijst niet naar een toegelaten Kabas-adres.");
-        return;
-      }
-      location.assign(kabasUrl.href);
-    }
-
-    async function startScan(mode) {
-      if (starting || running) return;
-      if (mode !== "microsoft" && mode !== "kabas") return;
-      if (typeof Html5Qrcode === "undefined") { alert("De QR-scanner kon niet worden geladen."); return; }
-      if (!window.isSecureContext && window.location.hostname !== "localhost") { alert("De camera werkt alleen via HTTPS."); return; }
-
-      scanMode = mode;
-      scannerModal.classList.add("open");
-      document.body.style.overflow = "hidden";
-      scannerTitle.textContent = mode === "kabas" ? "Scan de Kabas QR-code" : "Scan de Microsoft QR-code";
-      scanStatus.textContent = "Camera starten...";
-      starting = true;
-      resultHandled = false;
-
-      try {
-        scanner = new Html5Qrcode("reader");
-        const cameras = await Html5Qrcode.getCameras();
-        if (!cameras || !cameras.length) throw new Error("Geen camera gevonden");
-        const camera = cameras.find(function (item) { return /back|rear|environment|achter/i.test(item.label || ""); }) || cameras[0];
-
-        await scanner.start(
-          camera.id,
-          { fps:10, qrbox:function(width,height){ const size=Math.floor(Math.min(width,height)*.72); return {width:size,height:size}; } },
-          async function (decodedText) {
-            if (resultHandled) return;
-            resultHandled = true;
-            const selectedMode = scanMode;
-            await closeScanner(false);
-            if (selectedMode === "kabas") handleKabasQR(decodedText);
-            else handleMicrosoftQR(decodedText);
-          },
-          function () {}
-        );
-        running = true;
-        scanStatus.textContent = "Houd de QR-code binnen het kader.";
-      } catch (error) {
-        console.error("Camera kon niet starten:", error);
-        await resetScanner();
-        alert("De camera kon niet worden gestart. Controleer de cameratoestemming in Chrome en sluit andere apps die de camera gebruiken.");
-      } finally { starting = false; }
-    }
-
-    async function resetScanner() {
-      if (scanner && running) { try { await scanner.stop(); } catch (error) { console.warn(error); } }
-      if (scanner) { try { await scanner.clear(); } catch (error) { console.warn(error); } }
-      scanner = null; running = false; starting = false; resultHandled = false; scanMode = null;
-      scannerModal.classList.remove("open"); document.body.style.overflow = ""; scannerTitle.textContent = "Scan de QR-code";
-    }
-
-    async function closeScanner(refocus = true) { await resetScanner(); if (refocus) inputElement.focus(); }
-
-    function goToTeams(user) { location.href = "https://teams.microsoft.com/?login_hint=" + encodeURIComponent(user); }
-
-    function openApp(app) {
-      const user = getUserFromInput();
-      if (!user) return;
-      const encodedUser = encodeURIComponent(user);
-      const links = {
-        teams:"https://teams.microsoft.com/?login_hint=" + encodedUser,
-        word:"https://www.office.com/launch/word?auth=2&login_hint=" + encodedUser,
-        powerpoint:"https://www.office.com/launch/powerpoint?auth=2&login_hint=" + encodedUser,
-        onedrive:"https://www.office.com/launch/onedrive?auth=2&login_hint=" + encodedUser,
-        outlook:"https://outlook.office.com/mail/?login_hint=" + encodedUser
-      };
-      if (links[app]) location.href = links[app];
-    }
-
-    const toolboxLinks = {
-      l1:"https://www.canva.com/design/DAFUpBzBHGs/6wyDjMD8Qlq2vjbS9nKoog/view",
-      l2:"https://www.canva.com/design/DAFT_E7BGO8/g5t-f42RS_2QKPxb2QthBw/view",
-      l3:"https://www.canva.com/design/DAFULuLHwxo/D3B5GonSVhfqEqwaaD6mbw/view",
-      l4:"https://www.canva.com/design/DAGT1qUzh9s/b2FFy77S4U4Irmc41WYAeg/view",
-      l5:"https://www.canva.com/design/DAGT6iZW5Mw/K9Ui3yxsx0uSSehxgq2olg/view",
-      l6:"https://www.canva.com/design/DAFT_YiSTuo/B0CORzvLFmvSUMRDyGrfLA/view",
-      k2:"https://canva.link/c2soquwfe8utlox",
-      k3:"https://canva.link/lekkdwo40lv1h7q"
-    };
-    function openToolbox(key) { if (toolboxLinks[key]) location.href = toolboxLinks[key]; }
-    window.addEventListener("pagehide", function () { if (scanner) resetScanner(); });
+    const SCHOOL_DOMAIN="leerling.vbshgoor.be";
+    const ALLOWED_KABAS_HOSTS=["kabas.be","www.kabas.be","api.kabas.be"];
+    let scanner=null,running=false,starting=false,resultHandled=false,scanMode=null;
+    const inputElement=document.getElementById("snummer"),scannerModal=document.getElementById("scannerModal"),scanStatus=document.getElementById("scanStatus"),scannerTitle=document.getElementById("scannerTitle"),schoolLogoElement=document.getElementById("schoolLogo");
+    if(schoolLogoElement){schoolLogoElement.addEventListener("error",function(){schoolLogoElement.style.display="none";console.error("Logo niet gevonden. Controleer of pip_japi.png naast index.html staat.");});}
+    window.addEventListener("load",function(){inputElement.focus();});
+    document.addEventListener("keydown",function(event){if(event.key==="Escape")closeScanner();if(event.key==="Enter"&&document.activeElement===inputElement)openApp("teams");});
+    scannerModal.addEventListener("click",function(event){if(event.target===scannerModal)closeScanner();});
+    inputElement.addEventListener("input",function(){this.value=this.value.replace(/\s+/g,"");});
+    function clearInput(){inputElement.value="";inputElement.focus();}
+    function normalizeUser(value){let user=String(value||"").trim().replace(/\s/g,"").toLowerCase();if(/^\d{6}$/.test(user))user="s"+user+"@"+SCHOOL_DOMAIN;if(/^s\d{6}$/.test(user))user+="@"+SCHOOL_DOMAIN;const escaped=SCHOOL_DOMAIN.replace(/\./g,"\\.");const numericMail=new RegExp("^(\\d{6})@"+escaped+"$");const match=user.match(numericMail);if(match)user="s"+match[1]+"@"+SCHOOL_DOMAIN;return user;}
+    function isValidUser(user){const escaped=SCHOOL_DOMAIN.replace(/\./g,"\\.");return new RegExp("^s\\d{6}@"+escaped+"$").test(user);}
+    function getUserFromInput(){if(!inputElement.value.trim()){alert("Typ een S-nummer of scan een Microsoft QR-code.");inputElement.focus();return null;}const user=normalizeUser(inputElement.value);if(!isValidUser(user)){alert("Ongeldig S-nummer. Gebruik 6 cijfers, eventueel voorafgegaan door s.");inputElement.focus();inputElement.select();return null;}inputElement.value=user.split("@")[0];return user;}
+    function handleMicrosoftQR(data){const raw=String(data||"").trim();let user=raw;if(raw.toLowerCase().includes("login_hint=")){try{user=new URL(raw).searchParams.get("login_hint")||"";}catch(error){const match=raw.match(/[?&]login_hint=([^&]+)/i);user=match?decodeURIComponent(match[1]):"";}}user=normalizeUser(user);inputElement.value=user.split("@")[0]||user;if(!isValidUser(user)){alert("Dit is geen geldige Microsoft QR-code.");inputElement.focus();inputElement.select();return;}goToTeams(user);}
+    function handleKabasQR(data){const raw=String(data||"").trim();let kabasUrl;try{kabasUrl=new URL(raw);}catch(error){alert("Deze QR-code bevat geen herkenbare Kabas-link.");return;}if(kabasUrl.protocol!=="https:"){alert("De Kabas-link is niet beveiligd en werd daarom niet geopend.");return;}const hostname=kabasUrl.hostname.toLowerCase();const isAllowed=ALLOWED_KABAS_HOSTS.some(function(host){return hostname===host||hostname.endsWith("."+host);});if(!isAllowed){alert("Deze QR-code verwijst niet naar een toegelaten Kabas-adres.");return;}location.assign(kabasUrl.href);}
+    async function startScan(mode){if(starting||running)return;if(mode!=="microsoft"&&mode!=="kabas")return;if(typeof Html5Qrcode==="undefined"){alert("De QR-scanner kon niet worden geladen.");return;}if(!window.isSecureContext&&window.location.hostname!=="localhost"){alert("De camera werkt alleen via HTTPS.");return;}scanMode=mode;scannerModal.classList.add("open");document.body.style.overflow="hidden";scannerTitle.textContent=mode==="kabas"?"Scan de Kabas QR-code":"Scan de Microsoft QR-code";scanStatus.textContent="Camera starten...";starting=true;resultHandled=false;try{scanner=new Html5Qrcode("reader");const cameras=await Html5Qrcode.getCameras();if(!cameras||!cameras.length)throw new Error("Geen camera gevonden");const camera=cameras.find(function(item){return /back|rear|environment|achter/i.test(item.label||"");})||cameras[0];await scanner.start(camera.id,{fps:10,qrbox:function(width,height){const size=Math.floor(Math.min(width,height)*.72);return{width:size,height:size};}},async function(decodedText){if(resultHandled)return;resultHandled=true;const selectedMode=scanMode;await closeScanner(false);if(selectedMode==="kabas")handleKabasQR(decodedText);else handleMicrosoftQR(decodedText);},function(){});running=true;scanStatus.textContent="Houd de QR-code binnen het kader.";}catch(error){console.error("Camera kon niet starten:",error);await resetScanner();alert("De camera kon niet worden gestart. Controleer de cameratoestemming in Chrome en sluit andere apps die de camera gebruiken.");}finally{starting=false;}}
+    async function resetScanner(){if(scanner&&running){try{await scanner.stop();}catch(error){console.warn(error);}}if(scanner){try{await scanner.clear();}catch(error){console.warn(error);}}scanner=null;running=false;starting=false;resultHandled=false;scanMode=null;scannerModal.classList.remove("open");document.body.style.overflow="";scannerTitle.textContent="Scan de QR-code";}
+    async function closeScanner(refocus=true){await resetScanner();if(refocus)inputElement.focus();}
+    function goToTeams(user){location.href="https://teams.microsoft.com/?login_hint="+encodeURIComponent(user);}
+    function openApp(app){const user=getUserFromInput();if(!user)return;const encodedUser=encodeURIComponent(user);const links={teams:"https://teams.microsoft.com/?login_hint="+encodedUser,word:"https://word.cloud.microsoft/?login_hint="+encodedUser,powerpoint:"https://powerpoint.cloud.microsoft/?login_hint="+encodedUser,onedrive:"https://www.microsoft365.com/launch/onedrive?auth=2&login_hint="+encodedUser,outlook:"https://outlook.office.com/mail/?login_hint="+encodedUser};if(links[app])location.href=links[app];}
+    const toolboxLinks={l1:"https://www.canva.com/design/DAFUpBzBHGs/6wyDjMD8Qlq2vjbS9nKoog/view",l2:"https://www.canva.com/design/DAFT_E7BGO8/g5t-f42RS_2QKPxb2QthBw/view",l3:"https://www.canva.com/design/DAFULuLHwxo/D3B5GonSVhfqEqwaaD6mbw/view",l4:"https://www.canva.com/design/DAGT1qUzh9s/b2FFy77S4U4Irmc41WYAeg/view",l5:"https://www.canva.com/design/DAGT6iZW5Mw/K9Ui3yxsx0uSSehxgq2olg/view",l6:"https://www.canva.com/design/DAFT_YiSTuo/B0CORzvLFmvSUMRDyGrfLA/view",k2:"https://canva.link/c2soquwfe8utlox",k3:"https://canva.link/lekkdwo40lv1h7q"};
+    function openToolbox(key){if(toolboxLinks[key])location.href=toolboxLinks[key];}
+    window.addEventListener("pagehide",function(){if(scanner)resetScanner();});
   </script>
 </body>
 </html>

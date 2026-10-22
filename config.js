@@ -13,7 +13,7 @@ window.APP_CONFIG = {
     outlook: "https://outlook.office.com/mail/?login_hint={user}"
   },
   toolboxLinks: {
-    l1: "https://canva.link/xquw3jddn52t7zi",
+    l1: "https://canva.link/xquw3jddn52t7zi/view",
     l2: "https://www.canva.com/design/DAFT_E7BGO8/g5t-f42RS_2QKPxb2QthBw/view",
     l3: "https://www.canva.com/design/DAFUuLHwxo/D3B5GonSVhfqEqwaaD6mbw/view",
     l4: "https://www.canva.com/design/DAGT1qUzh9s/b2FFy77S4U4Irmc41WYAeg/view",

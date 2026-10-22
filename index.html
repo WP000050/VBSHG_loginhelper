@@ -7,6 +7,7 @@
   <title>Loginhelper Pip &amp; Japi</title>
 
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="./config.js"></script>
 
   <style>
     :root {
@@ -446,6 +447,16 @@
       font-size:14px;
     }
 
+    .scan-status.error {
+      color:#b91c1c;
+      font-weight:600;
+    }
+
+    .scan-status.success {
+      color:#166534;
+      font-weight:600;
+    }
+
     @media(max-width:1100px) {
       .topbar {
         grid-template-columns:180px minmax(150px,.7fr) minmax(460px,1.5fr);
@@ -755,9 +766,7 @@
 
       </div>
 
-      <p id="scanStatus" class="scan-status">
-        Camera starten...
-      </p>
+      <p id="scanStatus" class="scan-status">Camera starten...</p>
 
       <div id="reader"></div>
 
@@ -767,13 +776,15 @@
   <script>
     "use strict";
 
-    const SCHOOL_DOMAIN = "leerling.vbshgoor.be";
-
-    const ALLOWED_KABAS_HOSTS = [
+    const APP_CONFIG = window.APP_CONFIG || {};
+    const SCHOOL_DOMAIN = APP_CONFIG.schoolDomain || "leerling.vbshgoor.be";
+    const ALLOWED_KABAS_HOSTS = APP_CONFIG.allowedKabasHosts || [
       "kabas.be",
       "www.kabas.be",
       "api.kabas.be"
     ];
+    const MICROSOFT_APP_LINKS = APP_CONFIG.microsoftAppLinks || {};
+    const TOOLBOX_LINKS = APP_CONFIG.toolboxLinks || {};
 
     let scanner = null;
     let running = false;
@@ -787,40 +798,47 @@
     const scannerTitle = document.getElementById("scannerTitle");
     const schoolLogoElement = document.getElementById("schoolLogo");
 
+    function setStatus(message, type = "info") {
+      if (!scanStatus) return;
+      scanStatus.textContent = message || "";
+      scanStatus.classList.remove("error", "success");
+      if (type === "error") {
+        scanStatus.classList.add("error");
+      } else if (type === "success") {
+        scanStatus.classList.add("success");
+      }
+    }
 
-    /*
-     * LOGO
-     */
+    function formatLoginLink(template, user) {
+      return String(template || "")
+        .replace(/\{user\}/g, encodeURIComponent(user || ""));
+    }
+
+    function isAllowedKabasHost(hostname) {
+      const normalized = String(hostname || "").toLowerCase();
+      return ALLOWED_KABAS_HOSTS.some(host => normalized === host || normalized.endsWith("." + host));
+    }
 
     if (schoolLogoElement) {
       schoolLogoElement.addEventListener("error", function () {
         schoolLogoElement.style.display = "none";
-
-        console.error(
-          "Logo niet gevonden. Controleer of pip_japi.png naast index.html staat."
-        );
+        console.error("Logo niet gevonden. Controleer of pip_japi.png naast index.html staat.");
       });
     }
 
-
-    /*
-     * ALGEMENE EVENTS
-     */
-
     window.addEventListener("load", function () {
-      inputElement.focus();
+      if (inputElement) {
+        inputElement.focus();
+      }
+      setStatus("S-nummer invullen of QR-code scannen.");
     });
 
     document.addEventListener("keydown", function (event) {
-
       if (event.key === "Escape") {
         closeScanner();
       }
 
-      if (
-        event.key === "Enter" &&
-        document.activeElement === inputElement
-      ) {
+      if (event.key === "Enter" && document.activeElement === inputElement) {
         openApp("teams");
       }
     });
@@ -835,19 +853,13 @@
       this.value = this.value.replace(/\s+/g, "");
     });
 
-
-    /*
-     * S-NUMMER
-     */
-
     function clearInput() {
       inputElement.value = "";
       inputElement.focus();
+      setStatus("S-nummer invullen of QR-code scannen.");
     }
 
-
     function normalizeUser(value) {
-
       let user = String(value || "")
         .trim()
         .replace(/\s/g, "")
@@ -862,11 +874,7 @@
       }
 
       const escaped = SCHOOL_DOMAIN.replace(/\./g, "\\.");
-
-      const numericMail = new RegExp(
-        "^(\\d{6})@" + escaped + "$"
-      );
-
+      const numericMail = new RegExp("^(\\d{6})@" + escaped + "$", "i");
       const match = user.match(numericMail);
 
       if (match) {
@@ -876,326 +884,158 @@
       return user;
     }
 
-
     function isValidUser(user) {
-
       const escaped = SCHOOL_DOMAIN.replace(/\./g, "\\.");
-
-      return new RegExp(
-        "^s\\d{6}@" + escaped + "$"
-      ).test(user);
+      return new RegExp("^s\\d{6}@" + escaped + "$", "i").test(String(user || "").trim());
     }
 
-
     function getUserFromInput() {
-
       if (!inputElement.value.trim()) {
-
-        alert(
-          "Typ een S-nummer of scan een Microsoft QR-code."
-        );
-
+        setStatus("Typ een S-nummer of scan een Microsoft QR-code.", "error");
         inputElement.focus();
-
         return null;
       }
 
-      const user = normalizeUser(
-        inputElement.value
-      );
+      const user = normalizeUser(inputElement.value);
 
       if (!isValidUser(user)) {
-
-        alert(
-          "Ongeldig S-nummer. Gebruik 6 cijfers, eventueel voorafgegaan door s."
-        );
-
+        setStatus("Ongeldig S-nummer. Gebruik 6 cijfers, eventueel voorafgegaan door s.", "error");
         inputElement.focus();
         inputElement.select();
-
         return null;
       }
 
       inputElement.value = user.split("@")[0];
-
       return user;
     }
 
-
-    /*
-     * MICROSOFT QR
-     */
-
     function handleMicrosoftQR(data) {
-
       const raw = String(data || "").trim();
-
       let user = raw;
 
-      if (
-        raw.toLowerCase().includes("login_hint=")
-      ) {
-
+      if (raw && raw.toLowerCase().includes("login_hint=")) {
         try {
-
-          user =
-            new URL(raw).searchParams.get("login_hint") ||
-            "";
-
+          user = new URL(raw).searchParams.get("login_hint") || "";
         } catch (error) {
-
-          const match = raw.match(
-            /[?&]login_hint=([^&]+)/i
-          );
-
-          user = match
-            ? decodeURIComponent(match[1])
-            : "";
+          const match = raw.match(/[?&]login_hint=([^&]+)/i);
+          user = match ? decodeURIComponent(match[1]) : "";
         }
+      } else if (raw && raw.toLowerCase().includes("email=")) {
+        try {
+          user = new URL(raw).searchParams.get("email") || "";
+        } catch (error) {
+          const match = raw.match(/[?&]email=([^&]+)/i);
+          user = match ? decodeURIComponent(match[1]) : "";
+        }
+      } else if (raw && raw.includes("@")) {
+        user = raw;
       }
 
       user = normalizeUser(user);
-
-      inputElement.value =
-        user.split("@")[0] || user;
+      inputElement.value = user.split("@")[0] || user;
 
       if (!isValidUser(user)) {
-
-        alert(
-          "Dit is geen geldige Microsoft QR-code."
-        );
-
+        setStatus("Dit is geen geldige Microsoft QR-code.", "error");
         inputElement.focus();
         inputElement.select();
-
         return;
       }
 
       goToTeams(user);
     }
 
-
-    /*
-     * KABAS QR
-     */
-
     function handleKabasQR(data) {
-
       const raw = String(data || "").trim();
 
       let kabasUrl;
-
       try {
-
         kabasUrl = new URL(raw);
-
       } catch (error) {
-
-        alert(
-          "Deze QR-code bevat geen herkenbare Kabas-link."
-        );
-
+        setStatus("Deze QR-code bevat geen herkenbare Kabas-link.", "error");
         return;
       }
 
       if (kabasUrl.protocol !== "https:") {
-
-        alert(
-          "De Kabas-link is niet beveiligd en werd daarom niet geopend."
-        );
-
+        setStatus("De Kabas-link is niet beveiligd met HTTPS.", "error");
         return;
       }
 
-      const hostname =
-        kabasUrl.hostname.toLowerCase();
-
-      const isAllowed =
-        ALLOWED_KABAS_HOSTS.some(function (host) {
-
-          return (
-            hostname === host ||
-            hostname.endsWith("." + host)
-          );
-
-        });
-
-      if (!isAllowed) {
-
-        alert(
-          "Deze QR-code verwijst niet naar een toegelaten Kabas-adres."
-        );
-
+      const hostname = kabasUrl.hostname.toLowerCase();
+      if (!isAllowedKabasHost(hostname)) {
+        setStatus("Deze QR-code voldoet niet aan het toegestane Kabas-domein.", "error");
         return;
       }
 
-      location.assign(kabasUrl.href);
+      window.location.assign(kabasUrl.href);
     }
 
-
-    /*
-     * QR SCANNER
-     */
-
     async function startScan(mode) {
-
-      if (starting || running) {
+      if (starting || running) return;
+      if (mode !== "microsoft" && mode !== "kabas") return;
+      if (typeof window.Html5Qrcode === "undefined") {
+        setStatus("De QR-scanner is niet beschikbaar. Herlaad de pagina of controleer je internetverbinding.", "error");
         return;
       }
-
-      if (
-        mode !== "microsoft" &&
-        mode !== "kabas"
-      ) {
+      if (window.isSecureContext === false && window.location.hostname !== "localhost") {
+        setStatus("De camera werkt alleen via HTTPS of localhost.", "error");
         return;
       }
-
-      if (typeof Html5Qrcode === "undefined") {
-
-        alert(
-          "De QR-scanner kon niet worden geladen."
-        );
-
-        return;
-      }
-
-      if (
-        !window.isSecureContext &&
-        window.location.hostname !== "localhost"
-      ) {
-
-        alert(
-          "De camera werkt alleen via HTTPS."
-        );
-
-        return;
-      }
-
-      scanMode = mode;
-
-      ument.body.style.overflow = "hidden";
-
-      scannerTitle.textContent =
-        mode === "kabas"
-          ? "Scan de Kabas QR-code"
-          : "Scan de Microsoft QR-code";
-
-      scanStatus.textContent =
-        "Camera starten...";
 
       starting = true;
-      resultHandled = false;
+      scanMode = mode;
+      document.body.style.overflow = "hidden";
+      scannerTitle.textContent = mode === "kabas" ? "Scan de Kabas QR-code" : "Scan de Microsoft QR-code";
+      setStatus("Camera starten...");
+      scannerModal.classList.add("open");
 
       try {
+        scanner = new Html5Qrcode("reader");
+        const cameras = await Html5Qrcode.getCameras();
 
-        scanner =
-          new Html5Qrcode("reader");
-
-        const cameras =
-          await Html5Qrcode.getCameras();
-
-        if (
-          !cameras ||
-          !cameras.length
-        ) {
-
-          throw new Error(
-            "Geen camera gevonden"
-          );
+        if (!cameras || !cameras.length) {
+          throw new Error("Geen camera gevonden");
         }
 
-        const camera =
-          cameras.find(function (item) {
-
-            return /back|rear|environment|achter/i.test(
-              item.label || ""
-            );
-
-          }) || cameras[0];
-
+        const preferredCamera = cameras.find(camera => /back|rear|environment|achter|camera/i.test(camera.label || "")) || cameras[0];
 
         await scanner.start(
-
-          camera.id,
-
+          preferredCamera.id,
           {
-            fps:10,
-
-            qrbox:function (width,height) {
-
-              const size = Math.floor(
-                Math.min(width,height) * .72
-              );
-
-              return {
-                width:size,
-                height:size
-              };
+            fps: 10,
+            qrbox: function (viewfinderWidth, viewfinderHeight) {
+              const size = Math.floor(Math.min(viewfinderWidth, viewfinderHeight) * 0.72);
+              return { width: size, height: size };
             }
           },
-
           async function (decodedText) {
-
-            if (resultHandled) {
-              return;
-            }
-
+            if (resultHandled) return;
             resultHandled = true;
-
-            const selectedMode =
-              scanMode;
-
             await closeScanner(false);
 
-            if (
-              selectedMode === "kabas"
-            ) {
-
+            if (scanMode === "kabas") {
               handleKabasQR(decodedText);
-
             } else {
-
               handleMicrosoftQR(decodedText);
             }
           },
-
           function () {
-            // QR nog niet herkend
+            // QR niet herkend, wordt stilletjes genegeerd.
           }
         );
 
         running = true;
-
-        scanStatus.textContent =
-          "Houd de QR-code binnen het kader.";
-
+        setStatus("Gebruik de camera om een QR-code te scannen.");
       } catch (error) {
-
-        console.error(
-          "Camera kon niet starten:",
-          error
-        );
-
+        console.error("Camera kon niet starten:", error);
         await resetScanner();
-
-        alert(
-          "De camera kon niet worden gestart. Controleer de cameratoestemming in Chrome en sluit andere apps die de camera gebruiken."
-        );
-
+        setStatus("De camera kon niet starten. Controleer je browserinstellingen of geef toegang tot de camera.", "error");
       } finally {
-
         starting = false;
       }
     }
 
-
     async function resetScanner() {
-
-      if (
-        scanner &&
-        running
-      ) {
-
+      if (scanner && running) {
         try {
           await scanner.stop();
         } catch (error) {
@@ -1204,7 +1044,6 @@
       }
 
       if (scanner) {
-
         try {
           await scanner.clear();
         } catch (error) {
@@ -1217,133 +1056,51 @@
       starting = false;
       resultHandled = false;
       scanMode = null;
-
       scannerModal.classList.remove("open");
-
       document.body.style.overflow = "";
-
-      scannerTitle.textContent =
-        "Scan de QR-code";
+      scannerTitle.textContent = "Scan de QR-code";
+      setStatus("S-nummer invullen of QR-code scannen.");
     }
 
-
     async function closeScanner(refocus = true) {
-
       await resetScanner();
-
       if (refocus) {
         inputElement.focus();
       }
     }
 
-
-    /*
-     * MICROSOFT 365
-     */
-
     function goToTeams(user) {
-
-      location.href =
-        "https://teams.microsoft.com/?login_hint=" +
-        encodeURIComponent(user);
+      const linkTemplate = MICROSOFT_APP_LINKS.teams || "https://teams.microsoft.com/?login_hint={user}";
+      window.location.href = formatLoginLink(linkTemplate, user);
     }
 
-
     function openApp(app) {
+      const user = getUserFromInput();
+      if (!user) return;
 
-      const user =
-        getUserFromInput();
-
-      if (!user) {
+      const linkTemplate = MICROSOFT_APP_LINKS[app];
+      if (!linkTemplate) {
+        setStatus("Deze app is niet beschikbaar in de configuratie.", "error");
         return;
       }
 
-      const encodedUser =
-        encodeURIComponent(user);
-
-      const links = {
-
-        teams:
-          "https://teams.microsoft.com/?login_hint=" +
-          encodedUser,
-
-        word:
-          "https://word.cloud.microsoft/?login_hint=" +
-          encodedUser,
-
-        powerpoint:
-          "https://powerpoint.cloud.microsoft/?login_hint=" +
-          encodedUser,
-
-        onedrive:
-          "https://www.microsoft365.com/launch/onedrive?auth=2&login_hint=" +
-          encodedUser,
-
-        outlook:
-          "https://outlook.office.com/mail/?login_hint=" +
-          encodedUser
-      };
-
-      if (links[app]) {
-        location.href = links[app];
-      }
+      window.location.href = formatLoginLink(linkTemplate, user);
     }
-
-
-    /*
-     * TOOLBOXEN
-     */
-
-    const toolboxLinks = {
-
-      l1:
-        "https://www.canva.com/design/DAFUpBzBHGs/6wyDjMD8Qlq2vjbS9nKoog/view",
-
-      l2:
-        "https://www.canva.com/design/DAFT_E7BGO8/g5t-f42RS_2QKPxb2QthBw/view",
-
-      l3:
-        "https://www.canva.com/design/DAFULuLHwxo/D3B5GonSVhfqEqwaaD6mbw/view",
-
-      l4:
-        "https://www.canva.com/design/DAGT1qUzh9s/b2FFy77S4U4Irmc41WYAeg/view",
-
-      l5:
-        "https://www.canva.com/design/DAGT6iZW5Mw/K9Ui3yxsx0uSSehxgq2olg/view",
-
-      l6:
-        "https://www.canva.com/design/DAFT_YiSTuo/B0CORzvLFmvSUMRDyGrfLA/view",
-
-      k2:
-        "https://canva.link/c2soquwfe8utlox",
-
-      k3:
-        "https://canva.link/lekkdwo40lv1h7q"
-    };
-
 
     function openToolbox(key) {
-
-      if (toolboxLinks[key]) {
-        location.href = toolboxLinks[key];
+      const link = TOOLBOX_LINKS[key];
+      if (!link) {
+        setStatus("Deze toolbox-link is niet beschikbaar.", "error");
+        return;
       }
+      window.location.href = link;
     }
 
-
-    /*
-     * CAMERA STOPPEN BIJ VERLATEN PAGINA
-     */
-
-    window.addEventListener(
-      "pagehide",
-      function () {
-
-        if (scanner) {
-          resetScanner();
-        }
+    window.addEventListener("pagehide", function () {
+      if (scanner) {
+        resetScanner();
       }
-    );
-
+    });
   </script>
 
 </body>
